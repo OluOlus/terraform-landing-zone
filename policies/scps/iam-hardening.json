@@ -1,0 +1,109 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyCreatingUsersWithoutMFA",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateUser",
+        "iam:CreateAccessKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "false"
+        },
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyModifyingCriticalRoles",
+      "Effect": "Deny",
+      "Action": [
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:AttachRolePolicy",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription",
+        "iam:UpdateAssumeRolePolicy"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:role/uk-landing-zone-*",
+        "arn:aws:iam::*:role/OrganizationAccountAccessRole",
+        "arn:aws:iam::*:role/AWSControlTowerExecution",
+        "arn:aws:iam::*:role/AWSServiceRole*"
+      ],
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyCreatingAdminPolicies",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreatePolicy",
+        "iam:CreatePolicyVersion"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAnyValue:StringLike": {
+          "iam:PolicyDocument": [
+            "*\"Effect\":\"Allow\"*\"Action\":\"*\"*\"Resource\":\"*\"*",
+            "*\"Effect\":\"Allow\"*\"Action\":[\"*\"]*\"Resource\":\"*\"*",
+            "*\"Effect\":\"Allow\"*\"Action\":[\"*\"]*\"Resource\":[\"*\"]*"
+          ]
+        },
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyDisablingMFA",
+      "Effect": "Deny",
+      "Action": [
+        "iam:DeactivateMFADevice",
+        "iam:DeleteVirtualMFADevice",
+        "iam:ResyncMFADevice"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "RequireMFAForSensitiveActions",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:CreatePolicy",
+        "iam:DeletePolicy",
+        "iam:CreatePolicyVersion",
+        "iam:DeletePolicyVersion",
+        "iam:SetDefaultPolicyVersion"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "false"
+        },
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    }
+  ]
+}

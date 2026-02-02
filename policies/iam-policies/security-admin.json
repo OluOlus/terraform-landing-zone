@@ -1,0 +1,53 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SecurityAdminAccess",
+      "Effect": "Allow",
+      "Action": [
+        "guardduty:*",
+        "securityhub:*",
+        "access-analyzer:*",
+        "config:*",
+        "cloudtrail:*",
+        "iam:Get*",
+        "iam:List*",
+        "iam:GenerateCredentialReport",
+        "iam:GenerateServiceLastAccessedDetails",
+        "kms:*",
+        "logs:*",
+        "inspector2:*",
+        "macie2:*",
+        "detective:*",
+        "organizations:Describe*",
+        "organizations:List*",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeNetworkAcls",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeFlowLogs",
+        "s3:GetBucketPolicy",
+        "s3:GetBucketAcl",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetEncryptionConfiguration",
+        "sns:*",
+        "sqs:*",
+        "events:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyRegionRestriction",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "eu-west-2",
+            "eu-west-1"
+          ]
+        }
+      }
+    }
+  ]
+}
