@@ -7,7 +7,6 @@ config {
 
 plugin "terraform" {
   enabled = true
-  preset  = "recommended"
 }
 
 plugin "aws" {
