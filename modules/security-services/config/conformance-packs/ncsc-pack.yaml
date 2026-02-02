@@ -1,0 +1,293 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Security Standards Cloud Security Principles Conformance Pack for UK AWS Secure Landing Zone'
+
+Parameters:
+  AccessKeysRotatedParameterMaxAccessKeyAge:
+    Default: '90'
+    Type: String
+    Description: Maximum age in days for access keys before rotation required
+  
+  EncryptedVolumesParameterKmsKeyId:
+    Default: ''
+    Type: String
+    Description: KMS Key ID for EBS volume encryption
+  
+  S3BucketPublicAccessProhibitedParameterIgnorePublicAcls:
+    Default: 'true'
+    Type: String
+    Description: Ignore public ACLs for S3 buckets
+  
+  RootUserMfaEnabledParameterMaxCredentialUsageAge:
+    Default: '90'
+    Type: String
+    Description: Maximum age for root user credentials
+
+Resources:
+  # Security Standards Principle 1: Data in Transit Protection
+  ElbTlsHttpsListenersOnly:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: elb-tls-https-listeners-only
+      Description: 'Checks whether your Classic Load Balancer listeners are configured with HTTPS or SSL protocol for front-end (client to load balancer) connections'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ELB_TLS_HTTPS_LISTENERS_ONLY
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ElasticLoadBalancing::LoadBalancer
+
+  AlbHttpToHttpsRedirectionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: alb-http-to-https-redirection-check
+      Description: 'Checks whether HTTP to HTTPS redirection is configured on all HTTP listeners of Application Load Balancers'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ALB_HTTP_TO_HTTPS_REDIRECTION_CHECK
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ElasticLoadBalancingV2::LoadBalancer
+
+  # Security Standards Principle 2: Data at Rest Protection
+  EncryptedVolumes:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: encrypted-volumes
+      Description: 'Checks whether the EBS volumes that are in an attached state are encrypted'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ENCRYPTED_VOLUMES
+      InputParameters: !Sub |
+        {
+          "kmsKeyIds": "${EncryptedVolumesParameterKmsKeyId}"
+        }
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+
+  S3BucketServerSideEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-server-side-encryption-enabled
+      Description: 'Checks that your Amazon S3 bucket either has S3 default encryption enabled or that the S3 bucket policy explicitly denies put-object requests without server side encryption'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  RdsStorageEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-storage-encrypted
+      Description: 'Checks whether storage encryption is enabled for your RDS DB instances'
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_STORAGE_ENCRYPTED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+
+  # Security Standards Principle 3: Asset Protection and Resilience
+  RdsMultiAzSupport:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-multi-az-support
+      Description: 'Checks whether high availability is enabled for your RDS DB instances'
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_MULTI_AZ_SUPPORT
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+
+  DbInstanceBackupEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: db-instance-backup-enabled
+      Description: 'Checks whether RDS DB instances have backups enabled'
+      Source:
+        Owner: AWS
+        SourceIdentifier: DB_INSTANCE_BACKUP_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+
+  S3BucketVersioningEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-versioning-enabled
+      Description: 'Checks whether versioning is enabled for your S3 buckets'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  # Security Standards Principle 4: Separation Between Users
+  IamPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-password-policy
+      Description: 'Checks whether the account password policy for IAM users meets the specified requirements'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+
+  IamUserMfaEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-mfa-enabled
+      Description: 'Checks whether the AWS Identity and Access Management users have multi-factor authentication (MFA) enabled'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_MFA_ENABLED
+
+  RootUserMfaEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-user-mfa-enabled
+      Description: 'Checks whether the root user of your AWS account requires multi-factor authentication for console sign-in'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_USER_MFA_ENABLED
+      InputParameters: !Sub |
+        {
+          "maxCredentialUsageAge": "${RootUserMfaEnabledParameterMaxCredentialUsageAge}"
+        }
+
+  # Security Standards Principle 5: Governance Framework
+  S3BucketPublicAccessProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-public-access-prohibited
+      Description: 'Checks whether Amazon S3 buckets do not allow public access'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_ACCESS_PROHIBITED
+      InputParameters: !Sub |
+        {
+          "ignorePublicAcls": "${S3BucketPublicAccessProhibitedParameterIgnorePublicAcls}"
+        }
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  IamPolicyNoStatementsWithAdminAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-policy-no-statements-with-admin-access
+      Description: 'Checks whether the default version of AWS Identity and Access Management (IAM) policies do not have administrator access'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_POLICY_NO_STATEMENTS_WITH_ADMIN_ACCESS
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::IAM::Policy
+
+  # Security Standards Principle 6: Operational Security
+  CloudtrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-enabled
+      Description: 'Checks whether AWS CloudTrail is enabled in your AWS account'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  CloudwatchLogGroupEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudwatch-log-group-encrypted
+      Description: 'Checks whether a log group in Amazon CloudWatch Logs is encrypted'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDWATCH_LOG_GROUP_ENCRYPTED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Logs::LogGroup
+
+  GuarddutyEnabledCentralized:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: guardduty-enabled-centralized
+      Description: 'Checks whether Amazon GuardDuty is enabled in your AWS account and region'
+      Source:
+        Owner: AWS
+        SourceIdentifier: GUARDDUTY_ENABLED_CENTRALIZED
+
+  # Security Standards Principle 7: Personnel Security
+  AccessKeysRotated:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: access-keys-rotated
+      Description: 'Checks whether the active access keys are rotated within the number of days specified in maxAccessKeyAge'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      InputParameters: !Sub |
+        {
+          "maxAccessKeyAge": "${AccessKeysRotatedParameterMaxAccessKeyAge}"
+        }
+
+  IamUserUnusedCredentialsCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-unused-credentials-check
+      Description: 'Checks whether your IAM users have passwords or active access keys that have not been used within the specified number of days'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_UNUSED_CREDENTIALS_CHECK
+      InputParameters: |
+        {
+          "maxCredentialUsageAge": "90"
+        }
+
+  # UK-Specific Regional Compliance
+  ApprovedAmisById:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: approved-amis-by-id
+      Description: 'Checks whether running instances are using specified AMIs'
+      Source:
+        Owner: AWS
+        SourceIdentifier: APPROVED_AMIS_BY_ID
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+
+  Ec2InstancesInVpc:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instances-in-vpc
+      Description: 'Checks whether your EC2 instances belong to a virtual private cloud (VPC)'
+      Source:
+        Owner: AWS
+        SourceIdentifier: INSTANCES_IN_VPC
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+
+  RequiredTags:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: required-tags
+      Description: 'Checks whether your resources have the tags that you specify'
+      Source:
+        Owner: AWS
+        SourceIdentifier: REQUIRED_TAGS
+      InputParameters: |
+        {
+          "tag1Key": "DataClassification",
+          "tag2Key": "Environment",
+          "tag3Key": "CostCenter",
+          "tag4Key": "Owner"
+        }
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+          - AWS::S3::Bucket
+          - AWS::RDS::DBInstance
+          - AWS::ElasticLoadBalancing::LoadBalancer

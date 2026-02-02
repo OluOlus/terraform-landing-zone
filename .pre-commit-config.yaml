@@ -1,0 +1,137 @@
+# Pre-commit hooks configuration for UK AWS Secure Landing Zone
+# Ensures code quality, security, and compliance before commits
+
+repos:
+  # Terraform formatting and validation
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.83.5
+    hooks:
+      - id: terraform_fmt
+        name: Terraform Format
+        description: Rewrites all Terraform configuration files to a canonical format
+        
+      - id: terraform_validate
+        name: Terraform Validate
+        description: Validates all Terraform configuration files
+        args:
+          - --args=-json
+          
+      - id: terraform_docs
+        name: Terraform Docs
+        description: Inserts input and output documentation into README.md
+        args:
+          - --args=--config=.terraform-docs.yml
+          
+      - id: terraform_tflint
+        name: Terraform Lint
+        description: Validates all Terraform configuration files with TFLint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+          
+      - id: terraform_tfsec
+        name: Terraform Security Scan
+        description: Static analysis of Terraform templates to spot potential security issues
+        args:
+          - --args=--config-file=__GIT_WORKING_DIR__/.tfsec.yml
+
+  # Security scanning with Checkov
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.0.22
+    hooks:
+      - id: checkov
+        name: Checkov Security Scan
+        description: Scans cloud infrastructure configurations for security issues
+        args:
+          - --config-file=.checkov.yml
+          - --framework=terraform
+          - --quiet
+
+  # YAML and JSON validation
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+        name: Check YAML
+        description: Checks yaml files for parseable syntax
+        
+      - id: check-json
+        name: Check JSON
+        description: Checks json files for parseable syntax
+        
+      - id: pretty-format-json
+        name: Pretty Format JSON
+        description: Formats JSON files
+        args: ['--autofix']
+        
+      - id: check-merge-conflict
+        name: Check Merge Conflict
+        description: Check for files that contain merge conflict strings
+        
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        description: Trims trailing whitespace
+        
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        description: Makes sure files end in a newline and only a newline
+        
+      - id: check-added-large-files
+        name: Check Large Files
+        description: Prevents giant files from being committed
+        args: ['--maxkb=1000']
+
+  # Shell script validation
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        name: Shell Check
+        description: Static analysis tool for shell scripts
+        args: [--severity=warning]
+
+  # Markdown validation
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.37.0
+    hooks:
+      - id: markdownlint
+        name: Markdown Lint
+        description: Checks markdown files for style issues
+        args: [--config=.markdownlint.yml]
+
+  # Git commit message validation
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        name: Conventional Commit
+        description: Ensures commit messages follow conventional commit format
+        stages: [commit-msg]
+
+  # region-specific compliance checks
+  - repo: local
+    hooks:
+      - id: uk-compliance-check
+        name: UK Compliance Check
+        description: Validates UK data residency and compliance requirements
+        entry: scripts/validation/uk-compliance-check.sh
+        language: script
+        files: \.(tf|tfvars|json|yaml|yml)$
+        
+      - id: mandatory-tags-check
+        name: Mandatory Tags Check
+        description: Ensures all resources have mandatory UK tags
+        entry: scripts/validation/mandatory-tags-check.sh
+        language: script
+        files: \.tf$
+        
+      - id: region-restriction-check
+        name: Region Restriction Check
+        description: Validates that all resources are restricted to specified regions
+        entry: scripts/validation/region-restriction-check.sh
+        language: script
+        files: \.tf$
+
+# Global configuration
+default_stages: [commit]
+fail_fast: false
+minimum_pre_commit_version: 3.0.0

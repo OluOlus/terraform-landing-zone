@@ -1,0 +1,171 @@
+# CIS AWS Foundations Benchmark Compliance Pack
+# Based on CIS AWS Foundations Benchmark v1.4.0
+
+Parameters:
+  AccessKeysRotatedParamMaxAccessKeyAge:
+    Type: String
+    Default: "90"
+    Description: Maximum number of days without rotation for access keys
+
+Resources:
+  # CIS 1.3 - Ensure credentials unused for 90 days or greater are disabled
+  AccessKeysRotated:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: access-keys-rotated
+      Description: Checks whether the active access keys are rotated within the number of days specified in maxAccessKeyAge.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      InputParameters: !Sub |
+        {
+          "maxAccessKeyAge": "${AccessKeysRotatedParamMaxAccessKeyAge}"
+        }
+
+  # CIS 1.4 - Ensure access keys are rotated every 90 days or less
+  IAMUserUnusedCredentialsCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-unused-credentials-check
+      Description: Checks whether your IAM users have passwords or active access keys that have not been used within the specified number of days.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_UNUSED_CREDENTIALS_CHECK
+      InputParameters: |
+        {
+          "maxCredentialUsageAge": "90"
+        }
+
+  # CIS 1.5 - Ensure IAM password policy requires minimum length of 14 or greater
+  IAMPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-password-policy
+      Description: Checks whether the account password policy for IAM users meets the specified requirements.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      InputParameters: |
+        {
+          "RequireUppercaseCharacters": "true",
+          "RequireLowercaseCharacters": "true",
+          "RequireSymbols": "true",
+          "RequireNumbers": "true",
+          "MinimumPasswordLength": "14",
+          "PasswordReusePrevention": "24",
+          "MaxPasswordAge": "90"
+        }
+
+  # CIS 1.10 - Ensure IAM password policy prevents password reuse
+  IAMPasswordPolicyPreventReuse:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-password-policy-prevent-reuse
+      Description: Checks whether the IAM password policy prevents password reuse.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      InputParameters: |
+        {
+          "PasswordReusePrevention": "24"
+        }
+
+  # CIS 1.12 - Ensure no root user access key exists
+  RootAccessKeyCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-access-key-check
+      Description: Checks whether the root user access key is available.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCESS_KEY_CHECK
+
+  # CIS 1.13 - Ensure MFA is enabled for the root user
+  RootMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-mfa-enabled
+      Description: Checks whether the root user of your AWS account requires multi-factor authentication for console sign-in.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_MFA_ENABLED
+
+  # CIS 1.14 - Ensure hardware MFA is enabled for the root user
+  RootHardwareMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-hardware-mfa-enabled
+      Description: Checks whether your AWS account is enabled to use multi-factor authentication (MFA) hardware device to sign in with root credentials.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_HARDWARE_MFA_ENABLED
+
+  # CIS 2.1.1 - Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket
+  S3BucketLoggingEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-logging-enabled
+      Description: Checks whether logging is enabled for your S3 buckets.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_LOGGING_ENABLED
+
+  # CIS 2.1.2 - Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket
+  CloudTrailS3DataEvents:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-s3-dataevents-enabled
+      Description: Checks whether at least one AWS CloudTrail trail is logging Amazon S3 data events for all S3 buckets.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_S3_DATAEVENTS_ENABLED
+
+  # CIS 2.2 - Ensure CloudTrail log file validation is enabled
+  CloudTrailLogFileValidationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-log-file-validation-enabled
+      Description: Checks whether AWS CloudTrail creates a signed digest file with logs.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED
+
+  # CIS 2.3 - Ensure the S3 bucket used to store CloudTrail logs is not publicly accessible
+  S3BucketPublicAccessProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-public-access-prohibited
+      Description: Checks that your Amazon S3 buckets do not allow public access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_ACCESS_PROHIBITED
+
+  # CIS 2.4 - Ensure CloudTrail trails are integrated with CloudWatch Logs
+  CloudTrailCloudWatchLogsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-cloud-watch-logs-enabled
+      Description: Checks whether AWS CloudTrail trails are configured to send logs to Amazon CloudWatch logs.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED
+
+  # CIS 2.6 - Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket
+  S3BucketSSLRequestsOnly:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-ssl-requests-only
+      Description: Checks whether S3 buckets have policies that require requests to use Secure Socket Layer (SSL).
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SSL_REQUESTS_ONLY
+
+  # CIS 2.7 - Ensure CloudTrail logs are encrypted at rest using KMS CMKs
+  CloudTrailEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-encryption-enabled
+      Description: Checks whether AWS CloudTrail is configured to use the server side encryption (SSE) AWS Key Management Service (AWS KMS) customer master key (CMK) encryption.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENCRYPTION_ENABLED

@@ -1,0 +1,315 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'GDPR Compliance Conformance Pack for UK AWS Secure Landing Zone'
+
+Parameters:
+  DataRetentionPeriodDays:
+    Default: '2555'  # 7 years in days
+    Type: String
+    Description: Maximum data retention period in days for GDPR compliance
+  
+  EncryptionKeyRotationDays:
+    Default: '365'
+    Type: String
+    Description: Maximum days between encryption key rotations
+  
+  AccessLogRetentionDays:
+    Default: '2555'  # 7 years for audit logs
+    Type: String
+    Description: Access log retention period in days
+
+Resources:
+  # Article 25: Data Protection by Design and by Default
+  S3BucketServerSideEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-server-side-encryption-enabled
+      Description: 'GDPR Article 25: Ensures S3 buckets have server-side encryption enabled by default'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  RdsStorageEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-rds-storage-encrypted
+      Description: 'GDPR Article 25: Ensures RDS instances have storage encryption enabled'
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_STORAGE_ENCRYPTED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+
+  EncryptedVolumes:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-encrypted-volumes
+      Description: 'GDPR Article 25: Ensures EBS volumes are encrypted'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ENCRYPTED_VOLUMES
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+
+  # Article 30: Records of Processing Activities
+  CloudtrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloudtrail-enabled
+      Description: 'GDPR Article 30: Ensures CloudTrail is enabled for audit logging'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  CloudtrailLogFileValidationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloudtrail-log-file-validation-enabled
+      Description: 'GDPR Article 30: Ensures CloudTrail log file validation is enabled for integrity'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED
+
+  CloudwatchLogGroupRetentionPeriodCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloudwatch-log-group-retention-period-check
+      Description: 'GDPR Article 30: Ensures CloudWatch log groups have appropriate retention periods'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CW_LOGGROUP_RETENTION_PERIOD_CHECK
+      InputParameters: !Sub |
+        {
+          "MinRetentionTime": "${AccessLogRetentionDays}"
+        }
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Logs::LogGroup
+
+  # Article 32: Security of Processing
+  IamPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-iam-password-policy
+      Description: 'GDPR Article 32: Ensures strong password policies are in place'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+
+  IamUserMfaEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-iam-user-mfa-enabled
+      Description: 'GDPR Article 32: Ensures IAM users have MFA enabled for additional security'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_MFA_ENABLED
+
+  RootUserMfaEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-root-user-mfa-enabled
+      Description: 'GDPR Article 32: Ensures root user has MFA enabled'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_USER_MFA_ENABLED
+
+  # Article 33: Notification of Personal Data Breach
+  GuarddutyEnabledCentralized:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-guardduty-enabled-centralized
+      Description: 'GDPR Article 33: Ensures GuardDuty is enabled for breach detection'
+      Source:
+        Owner: AWS
+        SourceIdentifier: GUARDDUTY_ENABLED_CENTRALIZED
+
+  SecurityhubEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-securityhub-enabled
+      Description: 'GDPR Article 33: Ensures Security Hub is enabled for centralized security monitoring'
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITYHUB_ENABLED
+
+  # Article 35: Data Protection Impact Assessment
+  S3BucketPublicAccessProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-public-access-prohibited
+      Description: 'GDPR Article 35: Ensures S3 buckets do not allow public access to protect personal data'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_ACCESS_PROHIBITED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  S3BucketSslRequestsOnly:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-ssl-requests-only
+      Description: 'GDPR Article 35: Ensures S3 buckets require SSL requests for data protection in transit'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SSL_REQUESTS_ONLY
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  # Data Minimization and Purpose Limitation
+  S3BucketVersioningEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-versioning-enabled
+      Description: 'GDPR Data Minimization: Ensures S3 buckets have versioning enabled for data lifecycle management'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  S3BucketLifecycleConfigurationRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-lifecycle-configuration-rule
+      Description: 'GDPR Data Minimization: Ensures S3 buckets have lifecycle policies for data retention management'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_LIFECYCLE_CONFIGURATION_RULE
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  # Right to be Forgotten (Article 17)
+  RdsSnapshotEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-rds-snapshot-encrypted
+      Description: 'GDPR Article 17: Ensures RDS snapshots are encrypted for secure data deletion'
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_SNAPSHOT_ENCRYPTED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBSnapshot
+
+  EbsSnapshotPublicRestorableCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-ebs-snapshot-public-restorable-check
+      Description: 'GDPR Article 17: Ensures EBS snapshots are not publicly restorable'
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Snapshot
+
+  # Data Portability (Article 20)
+  S3BucketCrossRegionReplicationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-cross-region-replication-enabled
+      Description: 'GDPR Article 20: Ensures S3 buckets have cross-region replication for data portability'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_CROSS_REGION_REPLICATION_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  # Lawfulness of Processing (Article 6)
+  RequiredTags:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-required-tags
+      Description: 'GDPR Article 6: Ensures resources have required tags for lawful processing documentation'
+      Source:
+        Owner: AWS
+        SourceIdentifier: REQUIRED_TAGS
+      InputParameters: |
+        {
+          "tag1Key": "DataClassification",
+          "tag2Key": "DataSubjectCategory",
+          "tag3Key": "ProcessingPurpose",
+          "tag4Key": "LegalBasis",
+          "tag5Key": "RetentionPeriod",
+          "tag6Key": "DataController"
+        }
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+          - AWS::RDS::DBInstance
+          - AWS::EC2::Instance
+          - AWS::DynamoDB::Table
+
+  # Accountability (Article 5)
+  IamPolicyNoStatementsWithAdminAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-iam-policy-no-statements-with-admin-access
+      Description: 'GDPR Article 5: Ensures IAM policies follow principle of least privilege'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_POLICY_NO_STATEMENTS_WITH_ADMIN_ACCESS
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::IAM::Policy
+
+  AccessKeysRotated:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-access-keys-rotated
+      Description: 'GDPR Article 5: Ensures access keys are rotated regularly for accountability'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      InputParameters: |
+        {
+          "maxAccessKeyAge": "90"
+        }
+
+  # Data Transfer Restrictions
+  Ec2InstancesInVpc:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-ec2-instances-in-vpc
+      Description: 'GDPR Data Transfer: Ensures EC2 instances are in VPC for network isolation'
+      Source:
+        Owner: AWS
+        SourceIdentifier: INSTANCES_IN_VPC
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+
+  VpcDefaultSecurityGroupClosed:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-vpc-default-security-group-closed
+      Description: 'GDPR Data Transfer: Ensures default security groups restrict all traffic'
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_DEFAULT_SECURITY_GROUP_CLOSED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SecurityGroup
+
+  # Encryption Key Management
+  KmsKeyRotationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-kms-key-rotation-enabled
+      Description: 'GDPR Article 32: Ensures KMS keys have rotation enabled'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CMK_BACKING_KEY_ROTATION_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::KMS::Key

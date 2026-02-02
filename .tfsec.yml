@@ -1,0 +1,92 @@
+# TFSec configuration for UK AWS Secure Landing Zone security scanning
+
+# Severity levels: CRITICAL, HIGH, MEDIUM, LOW
+severity: MEDIUM
+
+# Output format options: default, json, csv, checkstyle, junit, sarif
+format: default
+
+# Exclude specific checks that don't apply to UK Landing Zone
+exclude:
+  # S3 bucket logging - we handle this at the organization level
+  - aws-s3-enable-bucket-logging
+  
+  # CloudTrail encryption - we use customer-managed KMS keys
+  - aws-cloudtrail-encryption-customer-key
+  
+  # VPC flow logs - handled centrally in logging account
+  - aws-ec2-require-vpc-flow-logs-for-all-vpcs
+
+# Include only UK-relevant checks
+include:
+  # Data residency and encryption
+  - aws-s3-encryption-customer-key
+  - aws-rds-encrypt-instance-storage-data
+  - aws-ebs-encryption-by-default
+  - aws-kms-auto-rotate-keys
+  
+  # Network security
+  - aws-vpc-no-public-ingress-sgr
+  - aws-ec2-no-public-ingress-sgr
+  - aws-vpc-no-public-egress-sgr
+  
+  # Access control
+  - aws-iam-no-policy-wildcards
+  - aws-iam-enforce-mfa
+  - aws-s3-block-public-policy
+  - aws-s3-block-public-acls
+  
+  # Logging and monitoring
+  - aws-cloudtrail-enable-all-regions
+  - aws-cloudtrail-enable-log-validation
+  - aws-config-aggregate-all-regions
+
+# Custom checks for compliance
+custom_checks:
+  - name: "UK_REGIONS_ONLY"
+    description: "Ensure resources are only created in specified regions"
+    query: |
+      resource[_].region as region
+      not region in ["us-west-2", "us-east-1"]
+    message: "Resources must be created in specified regions only (us-west-2, us-east-1)"
+    
+  - name: "MANDATORY_TAGS"
+    description: "Ensure mandatory UK tags are present"
+    query: |
+      resource[_] as r
+      required_tags := ["DataClassification", "Environment", "CostCenter", "Owner"]
+      missing_tags := [tag | tag := required_tags[_]; not r.tags[tag]]
+      count(missing_tags) > 0
+    message: "Resources must have mandatory UK tags: DataClassification, Environment, CostCenter, Owner"
+
+# Minimum severity to report
+minimum_severity: LOW
+
+# Soft fail - don't exit with error code
+soft_fail: false
+
+# Exclude directories
+exclude_paths:
+  - .terraform/
+  - .git/
+  - tests/
+  - examples/
+
+# Include file patterns
+include_paths:
+  - "**/*.tf"
+  - "**/*.tfvars"
+
+# Configuration for specific providers
+config:
+  aws:
+    # region-specific configuration
+    allowed_regions:
+      - "us-west-2"
+      - "us-east-1"
+    
+    # Required encryption
+    require_encryption: true
+    
+    # Block public access by default
+    block_public_access: true

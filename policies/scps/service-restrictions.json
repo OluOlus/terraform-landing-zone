@@ -1,0 +1,103 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyHighRiskServices",
+      "Effect": "Deny",
+      "Action": [
+        "sagemaker:*",
+        "comprehend:*",
+        "rekognition:*",
+        "textract:*",
+        "transcribe:*",
+        "translate:*",
+        "polly:*",
+        "lex:*",
+        "connect:*",
+        "chime:*",
+        "workspaces:*",
+        "workdocs:*",
+        "workmail:*",
+        "appstream:*",
+        "worklink:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyRootUserActions",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:PrincipalType": "Root"
+        },
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyDisablingCloudTrail",
+      "Effect": "Deny",
+      "Action": [
+        "cloudtrail:StopLogging",
+        "cloudtrail:DeleteTrail",
+        "cloudtrail:PutEventSelectors"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyDisablingConfig",
+      "Effect": "Deny",
+      "Action": [
+        "config:StopConfigurationRecorder",
+        "config:DeleteConfigurationRecorder",
+        "config:DeleteDeliveryChannel",
+        "config:PutConfigurationRecorder",
+        "config:PutDeliveryChannel"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyDisablingGuardDuty",
+      "Effect": "Deny",
+      "Action": [
+        "guardduty:DeleteDetector",
+        "guardduty:DeleteIPSet",
+        "guardduty:DeleteThreatIntelSet",
+        "guardduty:StopMonitoringMembers",
+        "guardduty:UpdateDetector"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DenyLeavingOrganization",
+      "Effect": "Deny",
+      "Action": [
+        "organizations:LeaveOrganization"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
