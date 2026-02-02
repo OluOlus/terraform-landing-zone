@@ -1,0 +1,77 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RequireMandatoryTags",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "rds:CreateDBInstance",
+        "s3:CreateBucket",
+        "lambda:CreateFunction",
+        "ecs:CreateService",
+        "eks:CreateCluster"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/DataClassification": "true"
+        }
+      }
+    },
+    {
+      "Sid": "RequireEnvironmentTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "rds:CreateDBInstance",
+        "s3:CreateBucket",
+        "lambda:CreateFunction",
+        "ecs:CreateService",
+        "eks:CreateCluster"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Environment": "true"
+        }
+      }
+    },
+    {
+      "Sid": "RequireCostCenterTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "rds:CreateDBInstance",
+        "s3:CreateBucket",
+        "lambda:CreateFunction",
+        "ecs:CreateService",
+        "eks:CreateCluster"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/CostCenter": "true"
+        }
+      }
+    },
+    {
+      "Sid": "RequireOwnerTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "rds:CreateDBInstance",
+        "s3:CreateBucket",
+        "lambda:CreateFunction",
+        "ecs:CreateService",
+        "eks:CreateCluster"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Owner": "true"
+        }
+      }
+    }
+  ]
+}

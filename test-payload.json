@@ -1,0 +1,9 @@
+{
+  "httpMethod": "POST",
+  "path": "/chat",
+  "headers": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer test-token"
+  },
+  "body": "{\"type\":\"message\",\"id\":\"test123\",\"from\":{\"id\":\"test-user\",\"name\":\"Test User\"},\"conversation\":{\"id\":\"test-conv\"},\"text\":\"health\",\"serviceUrl\":\"https://smba.trafficmanager.net/amer/\",\"channelId\":\"msteams\"}"
+}

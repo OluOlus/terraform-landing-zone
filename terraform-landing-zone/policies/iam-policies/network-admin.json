@@ -1,0 +1,66 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "NetworkAdminAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:*",
+        "vpc:*",
+        "directconnect:*",
+        "route53:*",
+        "route53resolver:*",
+        "cloudfront:*",
+        "globalaccelerator:*",
+        "networkmanager:*",
+        "elasticloadbalancing:*",
+        "network-firewall:*",
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "iam:CreateServiceLinkedRole",
+        "iam:GetRole",
+        "iam:ListRoles",
+        "kms:CreateGrant",
+        "kms:DescribeKey",
+        "kms:ListKeys",
+        "cloudwatch:PutMetricData",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "sns:Publish"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyIAMModification",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateUser",
+        "iam:DeleteUser",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:AttachUserPolicy",
+        "iam:AttachRolePolicy",
+        "iam:PutUserPolicy",
+        "iam:PutRolePolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyRegionRestriction",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "eu-west-2",
+            "eu-west-1"
+          ]
+        }
+      }
+    }
+  ]
+}

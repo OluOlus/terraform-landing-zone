@@ -1,0 +1,158 @@
+# NIST Cybersecurity Framework Compliance Pack
+# Based on NIST CSF v1.1 Core Functions
+
+Parameters:
+  S3BucketSSLRequestsOnlyParamBucketName:
+    Type: String
+    Default: ""
+    Description: S3 Bucket to check for SSL requests only
+
+Resources:
+  # IDENTIFY (ID) - Asset Management
+  EC2InstanceManagedBySsm:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-managed-by-ssm
+      Description: Checks whether the Amazon EC2 instances in your account are managed by AWS Systems Manager.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_MANAGED_BY_SSM
+
+  # IDENTIFY (ID) - Governance
+  IAMPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-password-policy
+      Description: Checks whether the account password policy for IAM users meets the specified requirements.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      InputParameters: |
+        {
+          "RequireUppercaseCharacters": "true",
+          "RequireLowercaseCharacters": "true",
+          "RequireSymbols": "true",
+          "RequireNumbers": "true",
+          "MinimumPasswordLength": "14",
+          "PasswordReusePrevention": "24",
+          "MaxPasswordAge": "90"
+        }
+
+  # PROTECT (PR) - Access Control
+  MFAEnabledForIAMConsoleAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: mfa-enabled-for-iam-console-access
+      Description: Checks whether AWS Multi-Factor Authentication (MFA) is enabled for all IAM users that can access the AWS Management Console.
+      Source:
+        Owner: AWS
+        SourceIdentifier: MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS
+
+  RootMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-mfa-enabled
+      Description: Checks whether the root user of your AWS account requires multi-factor authentication for console sign-in.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_MFA_ENABLED
+
+  # PROTECT (PR) - Data Security
+  S3BucketSSLRequestsOnly:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-ssl-requests-only
+      Description: Checks whether S3 buckets have policies that require requests to use Secure Socket Layer (SSL).
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SSL_REQUESTS_ONLY
+      InputParameters: !Sub |
+        {
+          "bucketName": "${S3BucketSSLRequestsOnlyParamBucketName}"
+        }
+
+  EBSEncryptedVolumes:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: encrypted-volumes
+      Description: Checks whether Amazon Elastic Block Store (Amazon EBS) volumes that are in an attached state are encrypted.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ENCRYPTED_VOLUMES
+
+  S3BucketServerSideEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-server-side-encryption-enabled
+      Description: Checks that your Amazon S3 bucket either has S3 default encryption enabled or that the S3 bucket policy explicitly denies put-object requests without server side encryption.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+
+  # PROTECT (PR) - Protective Technology
+  S3BucketPublicAccessProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-public-access-prohibited
+      Description: Checks that your Amazon S3 buckets do not allow public access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_ACCESS_PROHIBITED
+
+  # DETECT (DE) - Anomalies and Events
+  GuardDutyEnabledCentralized:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: guardduty-enabled-centralized
+      Description: Checks whether Amazon GuardDuty is enabled in your AWS account and region.
+      Source:
+        Owner: AWS
+        SourceIdentifier: GUARDDUTY_ENABLED_CENTRALIZED
+
+  SecurityHubEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: securityhub-enabled
+      Description: Checks that AWS Security Hub is enabled for an AWS Account.
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITYHUB_ENABLED
+
+  # DETECT (DE) - Security Continuous Monitoring
+  CloudTrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-enabled
+      Description: Checks whether AWS CloudTrail is enabled in your AWS account.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  CloudTrailLogFileValidationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-log-file-validation-enabled
+      Description: Checks whether AWS CloudTrail creates a signed digest file with logs.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED
+
+  # RESPOND (RS) - Response Planning
+  CloudTrailCloudWatchLogsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-cloud-watch-logs-enabled
+      Description: Checks whether AWS CloudTrail trails are configured to send logs to Amazon CloudWatch logs.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED
+
+  # RECOVER (RC) - Recovery Planning
+  S3BucketVersioningEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-versioning-enabled
+      Description: Checks whether versioning is enabled for your S3 buckets.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED

@@ -1,0 +1,4 @@
+# file: /Users/Olu/vsc/ops-agent-controller/src/aws_remediation_tools.py
+# hypothesis_version: 6.141.1
+
+['AvailabilityZone', 'Code', 'DryRunOperation', 'EXECUTED', 'Error', 'InstanceStatus', 'InstanceStatuses', 'InstanceType', 'Instances', 'MOCK_EXECUTED', 'Message', 'Name', 'No reason provided', 'Placement', 'RequestId', 'Reservations', 'ResponseMetadata', 'State', 'StateReason', 'Status', 'SystemStatus', 'Unknown', 'WOULD_EXECUTE', 'Z', '^i-[0-9a-f]{8,17}$', 'action', 'availability_zone', 'aws_request_id', 'current_state', 'ec2', 'get_reboot_status', 'instance_id', 'instance_status', 'instance_type', 'message', 'mock', 'passed', 'previous_state', 'reboot_initiated', 'running', 'state_reason', 'status', 'status_check', 'stopped', 'system_status', 'target_instance', 'timestamp', 'unknown', 'would_reboot']

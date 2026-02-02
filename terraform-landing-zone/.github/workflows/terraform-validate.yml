@@ -1,0 +1,59 @@
+name: Terraform Validation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+  push:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive .
+
+      - name: Terraform Init (modules)
+        run: |
+          for dir in modules/*/; do
+            if [ -f "$dir/main.tf" ]; then
+              echo "Initializing $dir"
+              cd "$dir"
+              terraform init -backend=false
+              cd -
+            fi
+          done
+
+      - name: Terraform Validate (modules)
+        run: |
+          for dir in modules/*/; do
+            if [ -f "$dir/main.tf" ]; then
+              echo "Validating $dir"
+              cd "$dir"
+              terraform validate
+              cd -
+            fi
+          done
+
+      - name: TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint --recursive

@@ -1,0 +1,79 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadOnlyAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:Describe*",
+        "ec2:Get*",
+        "s3:ListBucket",
+        "s3:ListAllMyBuckets",
+        "s3:GetObject",
+        "s3:GetBucketLocation",
+        "s3:GetBucketPolicy",
+        "lambda:Get*",
+        "lambda:List*",
+        "dynamodb:Describe*",
+        "dynamodb:List*",
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "rds:Describe*",
+        "rds:List*",
+        "cloudwatch:Describe*",
+        "cloudwatch:Get*",
+        "cloudwatch:List*",
+        "logs:Describe*",
+        "logs:Get*",
+        "logs:FilterLogEvents",
+        "logs:StartQuery",
+        "logs:StopQuery",
+        "logs:TestMetricFilter",
+        "sns:Get*",
+        "sns:List*",
+        "sqs:Get*",
+        "sqs:List*",
+        "events:Describe*",
+        "events:List*",
+        "iam:Get*",
+        "iam:List*",
+        "iam:GenerateCredentialReport",
+        "iam:GenerateServiceLastAccessedDetails",
+        "cloudtrail:Describe*",
+        "cloudtrail:Get*",
+        "cloudtrail:List*",
+        "cloudtrail:LookupEvents",
+        "config:Describe*",
+        "config:Get*",
+        "config:List*",
+        "guardduty:Describe*",
+        "guardduty:Get*",
+        "guardduty:List*",
+        "securityhub:Describe*",
+        "securityhub:Get*",
+        "securityhub:List*",
+        "organizations:Describe*",
+        "organizations:List*",
+        "kms:Describe*",
+        "kms:Get*",
+        "kms:List*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyRegionRestriction",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "eu-west-2",
+            "eu-west-1"
+          ]
+        }
+      }
+    }
+  ]
+}
