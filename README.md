@@ -263,26 +263,11 @@ Please report security vulnerabilities to: security@company.com
 
 ## Cost Management
 
-Estimated monthly costs (varies by usage):
-
-- **Management Account**: £150-200/month
-- **Security Tooling**: £200-300/month
-- **Log Archive**: £100-150/month
-- **Network Hub**: £250-350/month
-- **Production Workload**: £500-1000/month (application dependent)
-- **Total Baseline**: £1,200-2,000/month
-
 Cost controls included:
 - AWS Budgets with alerts at 80% and 100%
 - Cost Anomaly Detection
 - Resource tagging enforcement
 - Right-sizing recommendations
-
-## Support & Contact
-
-- **Compliance Officer**: compliance@company.com
-- **Security Team**: security@company.com
-- **Data Protection Officer**: dpo@company.com
 
 ## License
 
