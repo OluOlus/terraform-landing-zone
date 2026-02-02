@@ -2,6 +2,8 @@
 # Creates a UK-compliant VPC with public, private, and database subnets across multiple AZs
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

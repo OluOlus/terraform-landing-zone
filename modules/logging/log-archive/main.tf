@@ -3,6 +3,8 @@
 # with support for Security Standards Cloud Security Principles, GDPR compliance, and 7-year retention
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

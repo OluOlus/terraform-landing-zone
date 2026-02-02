@@ -2,6 +2,8 @@
 # This module contains Lambda functions for automated security remediation
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
