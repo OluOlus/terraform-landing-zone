@@ -1,5 +1,9 @@
-# Non-Production UK Environment Configuration
-# Configures the Non-Production UK Account for development and testing
+# Non-Production Environment Configuration
+# Configures the Non-Production Account for development and testing
 
-# Placeholder for Non-Production UK Environment implementation
+terraform {
+  required_version = ">= 1.5.0"
+}
+
+# Placeholder for Non-Production Environment implementation
 # This will be implemented in task 10.2
