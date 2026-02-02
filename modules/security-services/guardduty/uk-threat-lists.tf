@@ -169,7 +169,7 @@ resource "aws_lambda_function" "threat_intel_updater" {
     variables = {
       DETECTOR_ID                   = aws_guardduty_detector.main.id
       UK_GOVERNMENT_THREAT_LIST_URL = var.uk_government_threat_list_url
-      Security Standards_THREAT_LIST_URL          = var.ncsc_threat_list_url
+      NCSC_THREAT_LIST_URL          = var.ncsc_threat_list_url
       S3_BUCKET                     = var.threat_intel_s3_bucket
       KMS_KEY_ID                    = var.threat_intel_kms_key_id
     }
