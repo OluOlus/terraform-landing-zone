@@ -4,20 +4,20 @@
 [![AWS](https://img.shields.io/badge/AWS-Landing_Zone-FF9900?logo=amazon-aws)](https://aws.amazon.com/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-A production-ready, multi-account AWS environment designed for organizations requiring compliance with security standards and regulatory frameworks.
+A production-ready, multi-account AWS environment designed for organizations requiring compliance with industry security standards and regulatory frameworks.
 
 ## Overview
 
-This landing zone provides a complete AWS foundation implementing all 14 Security Standards Cloud Security Principles, GDPR requirements, and Security Essentials controls. Built with Infrastructure as Code (Terraform), it delivers a secure, compliant, and scalable multi-account architecture with centralized security monitoring, logging, and networking.
+This landing zone provides a complete AWS foundation implementing comprehensive cloud security principles, GDPR requirements, and security best practices. Built with Infrastructure as Code (Terraform), it delivers a secure, compliant, and scalable multi-account architecture with centralized security monitoring, logging, and networking.
 
 ### Key Highlights
 
 - **Security First**: GuardDuty, Security Hub, Config, Network Firewall, KMS encryption
-- **Compliance**: Security Standards, GDPR, Security Essentials frameworks fully implemented
+- **Compliance Ready**: Industry security standards, GDPR, regulatory frameworks fully implemented
 - **Production Ready**: 17,000+ lines of Terraform, 15 modules, comprehensive testing
-- **Data Residency**: specified regions only (us-east-1 primary, us-west-2 disaster recovery)
+- **Multi-Region**: Configurable regions with cross-region disaster recovery
 - **Automation**: Full IaC deployment, CI/CD workflows, automated compliance monitoring
-- **Observability**: Centralized CloudWatch, 7-year audit retention, real-time alerting
+- **Observability**: Centralized CloudWatch, configurable retention, real-time alerting
 
 ## Architecture
 
@@ -28,7 +28,7 @@ Management Account (Root)
 ├── Security Tooling Account    - GuardDuty, Security Hub, Config aggregation
 ├── Log Archive Account          - CloudTrail, VPC Flow Logs, 7-year retention
 ├── Network Hub Account          - Transit Gateway, Network Firewall, DNS
-├── Production Account        - Production workloads (us-east-1)
+├── Production Account           - Production workloads
 ├── Non-Production Account    - Development and testing
 └── Sandbox Account              - Experimentation and learning
 ```
@@ -58,7 +58,7 @@ See [Architecture Documentation](docs/architecture/README.md) for detailed diagr
 | Service | Purpose | Implementation |
 |---------|---------|----------------|
 | **GuardDuty** | Threat detection | S3 protection, malware detection, K8s audit logs |
-| **Security Hub** | Security posture | Security Standards, GDPR, Security Essentials packs |
+| **Security Hub** | Security posture | CIS, GDPR, Security Best Practices packs |
 | **AWS Config** | Configuration compliance | Continuous recording, automated remediation |
 | **Network Firewall** | Traffic inspection | Suricata IDS/IPS, domain filtering |
 | **IAM Identity Center** | Centralized SSO | 5 permission sets, MFA enforcement |
@@ -68,7 +68,7 @@ See [Architecture Documentation](docs/architecture/README.md) for detailed diagr
 - **KMS Encryption**: Automatic 365-day key rotation, multi-region replication
 - **S3 Security**: Versioning, MFA delete, public access blocking, cross-region replication
 - **AWS Backup**: Automated schedules, 7-year retention, cross-region backup
-- **Log Archive**: 7-year CloudTrail retention for GDPR compliance
+- **Log Archive**: Configurable CloudTrail retention for compliance requirements
 
 ### Networking
 
@@ -86,26 +86,26 @@ See [Architecture Documentation](docs/architecture/README.md) for detailed diagr
 
 ## Compliance Frameworks
 
-### Security Standards Cloud Security Principles (14/14)
+### CIS AWS Foundations Benchmark
 
-| ID | Principle | Status |
-|----|-----------|--------|
-| 1 | Data in transit protection | TLS 1.2+, VPN, Transit Gateway encryption |
-| 2 | Asset protection and resilience | Multi-AZ, cross-region replication |
-| 3 | Separation between users | Multi-account, IAM Identity Center, SCPs |
-| 4 | Governance framework | Organizations, Config, CloudTrail |
-| 5 | Operational security | GuardDuty, Security Hub, automated patching |
+| ID | Control | Implementation |
+|----|---------|----------------|
+| 1 | Identity and Access Management | IAM Identity Center, MFA, SCPs |
+| 2 | Logging | CloudTrail, VPC Flow Logs, Config |
+| 3 | Monitoring | GuardDuty, Security Hub, CloudWatch |
+| 4 | Networking | VPC isolation, Network Firewall, Security Groups |
+| 5 | Data Protection | KMS encryption, S3 versioning, backup |
 | ... | | See [COMPLIANCE.md](docs/compliance/COMPLIANCE.md) for full mapping |
 
 ### GDPR Compliance
 
 - **Encryption**: KMS at rest (365-day rotation), TLS 1.2+ in transit
-- **Data Retention**: 7-year audit log retention
-- **Data Residency**: specified regions regions only (us-east-1, us-west-2)
+- **Data Retention**: Configurable retention policies
+- **Data Residency**: Configurable region restrictions via SCPs
 - **Access Controls**: Least privilege via IAM Identity Center
 - **Breach Notification**: GuardDuty + Security Hub real-time alerts
 
-### Security Essentials
+### AWS Security Best Practices
 
 - **Boundary Firewalls**: Network Firewall, Security Groups, NACLs
 - **Secure Configuration**: AWS Config with conformance packs
@@ -133,20 +133,20 @@ terraform plan
 terraform apply
 
 # Phase 2: Deploy Security Services
-cd ../security-tooling
+cd ../security
 terraform init -backend-config=backend.hcl
 terraform apply
 
 # Phase 3: Configure Logging
-cd ../log-archive
+cd ../logging
 terraform apply
 
 # Phase 4: Setup Networking
-cd ../network-hub
+cd ../networking
 terraform apply
 
 # Phase 5: Deploy Workload Accounts
-cd ../production-uk
+cd ../production
 terraform apply
 ```
 
@@ -157,8 +157,8 @@ See [Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md) for detailed step-by
 Run compliance checks after deployment:
 
 ```bash
-# compliance validation
-./scripts/validation/uk-compliance-check.sh
+# Compliance validation
+./scripts/validation/compliance-check.sh
 
 # Terraform validation
 terraform fmt -check -recursive .
@@ -207,7 +207,7 @@ Automated validation and security scanning via GitHub Actions:
 - **[Security Scan](.github/workflows/security-scan.yml)** - TFSec, Checkov compliance scanning
 
 Workflows run on:
-- Every pull request to main/develop
+- Every pull request to main
 - Every push to main
 - Weekly security scans (Sunday)
 
@@ -226,7 +226,7 @@ Workflows run on:
 
 - **[Architecture](docs/architecture/README.md)** - Detailed architecture diagrams and component descriptions
 - **[Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md)** - Step-by-step deployment instructions
-- **[Compliance](docs/compliance/COMPLIANCE.md)** - Security Standards, GDPR, Security Essentials mappings
+- **[Compliance](docs/compliance/COMPLIANCE.md)** - CIS, GDPR, Security Best Practices mappings
 - **[Operations](docs/operations/)** - Runbooks and operational procedures (coming soon)
 - **[Troubleshooting](docs/troubleshooting/)** - Common issues and solutions (coming soon)
 
@@ -242,7 +242,7 @@ Each module includes comprehensive README with:
 
 - **RTO**: < 4 hours
 - **RPO**: < 1 hour
-- **Multi-region**: us-east-1 (primary) → us-west-2 (DR)
+- **Multi-region**: Configurable primary and DR regions
 - **Backup Strategy**: Automated cross-region replication
 - **Testing**: Quarterly DR drills recommended
 
@@ -294,9 +294,9 @@ This project is licensed under the Apache License 2.0 - see the LICENSE file for
 Built with:
 - [AWS Verified Modules](https://registry.terraform.io/namespaces/aws-ia)
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest)
-- Security Standards Cloud Security Guidance
-- GDPR requirements
-- Security Essentials framework
+- CIS AWS Foundations Benchmark
+- AWS Security Best Practices
+- Industry compliance frameworks
 
 ---
 

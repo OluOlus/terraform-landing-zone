@@ -312,16 +312,9 @@ resource "aws_s3_bucket_intelligent_tiering_configuration" "main" {
   status = each.value.status
 
   dynamic "filter" {
-    for_each = each.value.filter_prefix != null || each.value.filter_tags != null ? [1] : []
+    for_each = each.value.filter_prefix != null ? [1] : []
     content {
       prefix = each.value.filter_prefix
-      dynamic "tag" {
-        for_each = each.value.filter_tags != null ? each.value.filter_tags : {}
-        content {
-          key   = tag.key
-          value = tag.value
-        }
-      }
     }
   }
 

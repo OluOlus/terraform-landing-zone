@@ -2,7 +2,7 @@ name: Terraform Validation
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - '**.tf'
       - '**.tfvars'
