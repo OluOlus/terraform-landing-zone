@@ -2,6 +2,8 @@
 # This module implements centralized backup management for the UK AWS Secure Landing Zone
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

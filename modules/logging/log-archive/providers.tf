@@ -3,6 +3,8 @@
 # and one for replica region (us-west-2)
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source                = "hashicorp/aws"

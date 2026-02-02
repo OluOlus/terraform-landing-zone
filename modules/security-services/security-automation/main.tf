@@ -3,6 +3,8 @@
 # Integrates with Security Hub, GuardDuty, and Config for automated response to security violations
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

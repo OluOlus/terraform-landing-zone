@@ -1,8 +1,9 @@
-# S3 Storage Module - UK Compliant Object Storage
-# This module implements secure S3 buckets for the UK AWS Secure Landing Zone
-# with support for Security Standards Cloud Security Principles and GDPR compliance
+# S3 Storage Module - Compliant Object Storage
+# This module implements secure S3 buckets with support for industry security standards and compliance requirements
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
