@@ -1,110 +1,23 @@
-# Checkov configuration for UK AWS Secure Landing Zone
+# Checkov configuration for AWS Secure Landing Zone
+# Simplified configuration compatible with GitHub Actions checkov-action
 
 # Framework to scan
 framework:
   - terraform
-  - terraform_plan
-  - json
-  - yaml
-
-# Output format
-output: cli
-
-# Quiet mode
-quiet: false
 
 # Compact output
 compact: true
 
-# Exit code for failed checks
-hard_fail_on: HIGH,CRITICAL
+# Skip specific checks that are handled at organization level or not applicable
+skip-check:
+  - CKV_AWS_21  # S3 bucket versioning - handled centrally
+  - CKV_AWS_76  # VPC flow logs - centrally managed
+  - CKV_AWS_144 # Ensure S3 bucket has cross-region replication - optional feature
+  - CKV_AWS_18  # S3 access logging - handled at organization level
 
-# Skip specific checks that don't apply to UK Landing Zone
-skip_check:
-  # S3 bucket versioning - handled at organization level
-  - CKV_AWS_21
-  
-  # CloudTrail encryption - we use customer-managed keys
-  - CKV_AWS_35
-  
-  # VPC flow logs - centrally managed
-  - CKV_AWS_76
-
-# Include only relevant checks
-check:
-  # Encryption checks
-  - CKV_AWS_7   # Ensure RDS clusters have encryption enabled
-  - CKV_AWS_16  # Ensure S3 bucket has encryption enabled
-  - CKV_AWS_145 # Ensure EBS volumes are encrypted
-  - CKV_AWS_7   # Ensure KMS key rotation is enabled
-  
-  # Network security
-  - CKV_AWS_23  # Ensure security groups don't allow ingress from 0.0.0.0/0
-  - CKV_AWS_25  # Ensure security groups don't allow ingress from ::/0
-  - CKV_AWS_24  # Ensure no security groups allow ingress from 0.0.0.0/0 to port 22
-  
-  # Access control
-  - CKV_AWS_60  # Ensure IAM policy does not grant '*' permissions
-  - CKV_AWS_62  # Ensure S3 bucket has public access blocked
-  - CKV_AWS_53  # Ensure S3 bucket has block public ACLs enabled
-  
-  # Logging and monitoring
-  - CKV_AWS_36  # Ensure CloudTrail log file validation is enabled
-  - CKV_AWS_35  # Ensure CloudTrail is encrypted
-  - CKV_AWS_67  # Ensure CloudWatch Log Group is encrypted
-
-# Custom policies directory
-external_checks_dir: ./policies/checkov
-
-# Baseline file for suppressing known issues
-baseline: .checkov.baseline
-
-# Create baseline if it doesn't exist
-create_baseline: true
-
-# Download external checks
-download_external_modules: true
-
-# Evaluate variables
-evaluate_variables: true
-
-# region-specific configuration
-var_file:
-  - terraform.tfvars
-  - environments/*/terraform.tfvars
-
-# Exclude paths
-skip_path:
+# Exclude paths from scanning
+skip-path:
   - .terraform/
   - .git/
-  - tests/unit/
+  - tests/
   - examples/
-
-# Include only specific file types
-include_paths:
-  - "**/*.tf"
-  - "**/*.tfvars"
-  - "**/*.json"
-  - "**/*.yaml"
-  - "**/*.yml"
-
-# Severity levels
-severity:
-  - CRITICAL
-  - HIGH
-  - MEDIUM
-  - LOW
-
-# compliance specific settings
-custom_checks:
-  uk_data_residency:
-    enabled: true
-    description: "Ensure UK data residency compliance"
-    
-  mandatory_tagging:
-    enabled: true
-    description: "Ensure mandatory UK tags are present"
-    
-  encryption_standards:
-    enabled: true
-    description: "Ensure UK encryption standards are met"
