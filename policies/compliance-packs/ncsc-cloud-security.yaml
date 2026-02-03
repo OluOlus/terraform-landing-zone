@@ -1,0 +1,338 @@
+# NCSC Cloud Security Principles Compliance Pack
+# Based on UK National Cyber Security Centre Cloud Security Principles
+# https://www.ncsc.gov.uk/collection/cloud-security
+
+Parameters:
+  DataRetentionDays:
+    Type: String
+    Default: "2555"
+    Description: Minimum data retention period in days (7 years)
+
+Resources:
+  # Principle 1: Data in transit protection
+  # Ensure data is encrypted in transit
+  ALBHttpsOnly:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: alb-http-to-https-redirection-check
+      Description: NCSC Principle 1 - Checks whether HTTP to HTTPS redirection is configured on all HTTP listeners of Application Load Balancers.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ALB_HTTP_TO_HTTPS_REDIRECTION_CHECK
+
+  ELBTLSHttpsListenersOnly:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: elb-tls-https-listeners-only
+      Description: NCSC Principle 1 - Checks whether all listeners for Elastic Load Balancers are configured with SSL/HTTPS.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ELB_TLS_HTTPS_LISTENERS_ONLY
+
+  RedshiftClusterTransitEncryption:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: redshift-require-tls-ssl
+      Description: NCSC Principle 1 - Checks whether Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients.
+      Source:
+        Owner: AWS
+        SourceIdentifier: REDSHIFT_REQUIRE_TLS_SSL
+
+  # Principle 2: Asset protection and resilience
+  # UK data residency and backup requirements
+  S3BucketReplicationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-replication-enabled
+      Description: NCSC Principle 2 - Checks whether S3 buckets have cross-region replication enabled for resilience.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_REPLICATION_ENABLED
+
+  RDSMultiAZSupport:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-multi-az-support
+      Description: NCSC Principle 2 - Checks whether high availability is enabled for your RDS DB instances.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_MULTI_AZ_SUPPORT
+
+  BackupPlanMinFrequencyAndMinRetentionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-plan-min-frequency-and-min-retention-check
+      Description: NCSC Principle 2 - Checks if a backup plan has a backup rule that satisfies the required frequency and retention period.
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK
+      InputParameters: !Sub |
+        {
+          "requiredFrequencyUnit": "days",
+          "requiredFrequencyValue": "1",
+          "requiredRetentionDays": "${DataRetentionDays}"
+        }
+
+  # Principle 3: Separation between customers
+  # Ensure proper network isolation
+  VPCFlowLogsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-flow-logs-enabled
+      Description: NCSC Principle 3 - Checks whether Amazon VPC Flow Logs are enabled to monitor traffic.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_FLOW_LOGS_ENABLED
+
+  VPCDefaultSecurityGroupClosed:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-default-security-group-closed
+      Description: NCSC Principle 3 - Checks that the default security group of any VPC does not allow inbound or outbound traffic.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_DEFAULT_SECURITY_GROUP_CLOSED
+
+  # Principle 4: Governance framework
+  # Ensure proper tagging and organization
+  RequiredTagsEC2:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: required-tags-ec2
+      Description: NCSC Principle 4 - Checks whether EC2 instances have required tags.
+      Source:
+        Owner: AWS
+        SourceIdentifier: REQUIRED_TAGS
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      InputParameters: |
+        {
+          "tag1Key": "DataClassification",
+          "tag2Key": "Environment",
+          "tag3Key": "Owner",
+          "tag4Key": "CostCenter"
+        }
+
+  # Principle 5: Operational security
+  # Vulnerability management and patching
+  EC2InstanceManagedBySSM:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-managed-by-systems-manager
+      Description: NCSC Principle 5 - Checks whether instances are managed by AWS Systems Manager for patching.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_MANAGED_BY_SSM
+
+  EC2ManagedInstancePatchComplianceStatusCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-patch-compliance-status-check
+      Description: NCSC Principle 5 - Checks whether the compliance status of AWS Systems Manager patch is COMPLIANT.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK
+
+  # Principle 6: Personnel security
+  # IAM best practices
+  IAMUserMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-mfa-enabled
+      Description: NCSC Principle 6 - Checks whether the AWS IAM users have MFA enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_MFA_ENABLED
+
+  IAMRootAccessKeyCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-root-access-key-check
+      Description: NCSC Principle 6 - Checks whether the root user access key is available.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_ROOT_ACCESS_KEY_CHECK
+
+  IAMUserNoPoliciesCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-no-policies-check
+      Description: NCSC Principle 6 - Checks that IAM users have no inline or directly attached policies.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_NO_POLICIES_CHECK
+
+  # Principle 7: Secure development
+  # Code and deployment security
+  CodeBuildProjectSourceRepoUrlCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: codebuild-project-source-repo-url-check
+      Description: NCSC Principle 7 - Checks whether the GitHub or Bitbucket source repository URL contains personal access tokens.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CODEBUILD_PROJECT_SOURCE_REPO_URL_CHECK
+
+  # Principle 8: Supply chain security
+  # Third-party service security
+  ECRPrivateRepositoryScanningEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ecr-private-image-scanning-enabled
+      Description: NCSC Principle 8 - Checks whether Amazon ECR private repositories have image scanning enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ECR_PRIVATE_IMAGE_SCANNING_ENABLED
+
+  # Principle 9: Secure user management
+  # Identity and access management
+  IAMPolicyNoStatementsWithAdminAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-policy-no-statements-with-admin-access
+      Description: NCSC Principle 9 - Checks whether IAM policies do not grant full administrative privileges.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_POLICY_NO_STATEMENTS_WITH_ADMIN_ACCESS
+
+  IAMPolicyNoStatementsWithFullAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-policy-no-statements-with-full-access
+      Description: NCSC Principle 9 - Checks whether IAM policies grant full access to any service.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_POLICY_NO_STATEMENTS_WITH_FULL_ACCESS
+
+  # Principle 10: Identity and authentication
+  # Strong authentication requirements
+  RootAccountMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-account-mfa-enabled
+      Description: NCSC Principle 10 - Checks whether the root user has MFA enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
+
+  MFAEnabledForIAMConsoleAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: mfa-enabled-for-iam-console-access
+      Description: NCSC Principle 10 - Checks whether MFA is enabled for all IAM users with console access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS
+
+  # Principle 11: External interface protection
+  # Network security
+  RestrictedSSH:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: restricted-ssh
+      Description: NCSC Principle 11 - Checks whether security groups allow unrestricted SSH access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: INCOMING_SSH_DISABLED
+
+  RestrictedRDP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: restricted-common-ports
+      Description: NCSC Principle 11 - Checks whether security groups allow unrestricted access to common ports.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RESTRICTED_INCOMING_TRAFFIC
+      InputParameters: |
+        {
+          "blockedPort1": "3389",
+          "blockedPort2": "22",
+          "blockedPort3": "3306",
+          "blockedPort4": "5432",
+          "blockedPort5": "1433"
+        }
+
+  # Principle 12: Secure service administration
+  # Administrative access controls
+  CloudTrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-enabled
+      Description: NCSC Principle 12 - Checks whether AWS CloudTrail is enabled in your account.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  CloudTrailEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-encryption-enabled
+      Description: NCSC Principle 12 - Checks whether CloudTrail logs are encrypted using KMS.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENCRYPTION_ENABLED
+
+  # Principle 13: Audit information and alerting
+  # Logging and monitoring
+  CloudWatchAlarmActionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudwatch-alarm-action-check
+      Description: NCSC Principle 13 - Checks whether CloudWatch alarms have actions configured.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDWATCH_ALARM_ACTION_CHECK
+      InputParameters: |
+        {
+          "alarmActionRequired": "true",
+          "insufficientDataActionRequired": "false",
+          "okActionRequired": "false"
+        }
+
+  GuardDutyEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: guardduty-enabled-centralized
+      Description: NCSC Principle 13 - Checks whether Amazon GuardDuty is enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: GUARDDUTY_ENABLED_CENTRALIZED
+
+  SecurityHubEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: securityhub-enabled
+      Description: NCSC Principle 13 - Checks whether AWS Security Hub is enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITYHUB_ENABLED
+
+  # Principle 14: Secure use of the service
+  # Data protection
+  S3BucketServerSideEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-server-side-encryption-enabled
+      Description: NCSC Principle 14 - Checks whether S3 buckets have server-side encryption enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+
+  RDSStorageEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-storage-encrypted
+      Description: NCSC Principle 14 - Checks whether storage encryption is enabled for RDS DB instances.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_STORAGE_ENCRYPTED
+
+  EBSEncryptionByDefault:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-ebs-encryption-by-default
+      Description: NCSC Principle 14 - Checks whether Amazon EBS encryption is enabled by default.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_EBS_ENCRYPTION_BY_DEFAULT
