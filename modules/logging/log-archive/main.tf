@@ -2,17 +2,6 @@
 # This module implements centralized log storage for the UK AWS Secure Landing Zone
 # with support for Security Standards Cloud Security Principles, GDPR compliance, and 7-year retention
 
-terraform {
-  required_version = ">= 1.5.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # Primary Log Archive S3 Bucket (us-east-1)
 resource "aws_s3_bucket" "log_archive_primary" {
   bucket        = var.primary_bucket_name
