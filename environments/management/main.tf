@@ -2,7 +2,7 @@
 # Configures the Management Account with Organizations, Identity Center, and centralized services
 
 terraform {
-  required_version = "~> 1.9"
+  required_version = ">= 1.5.0"
 
   required_providers {
     aws = {

@@ -1,0 +1,330 @@
+# UK GDPR Compliance Pack
+# Based on UK General Data Protection Regulation requirements
+# Implements technical controls for data protection and privacy
+
+Parameters:
+  DataRetentionDays:
+    Type: String
+    Default: "2555"
+    Description: Default data retention period in days (7 years for audit compliance)
+
+  PersonalDataClassificationTag:
+    Type: String
+    Default: "personal-data"
+    Description: Tag value used to identify resources containing personal data
+
+Resources:
+  # Article 5 - Principles relating to processing of personal data
+  # 5(1)(f) - Integrity and confidentiality (security)
+
+  # Encryption at rest for all storage
+  S3BucketServerSideEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-server-side-encryption-enabled
+      Description: UK GDPR Article 5(1)(f) - Ensures S3 buckets have encryption enabled for data integrity and confidentiality.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+
+  S3DefaultEncryptionKMS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-default-encryption-kms
+      Description: UK GDPR Article 5(1)(f) - Checks that S3 buckets are encrypted with AWS KMS.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_DEFAULT_ENCRYPTION_KMS
+
+  RDSStorageEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-rds-storage-encrypted
+      Description: UK GDPR Article 5(1)(f) - Ensures RDS instances have encryption enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_STORAGE_ENCRYPTED
+
+  EBSEncryptionByDefault:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-ec2-ebs-encryption-by-default
+      Description: UK GDPR Article 5(1)(f) - Ensures EBS encryption is enabled by default.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_EBS_ENCRYPTION_BY_DEFAULT
+
+  DynamoDBTableEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-dynamodb-table-encryption-enabled
+      Description: UK GDPR Article 5(1)(f) - Checks whether DynamoDB tables are encrypted.
+      Source:
+        Owner: AWS
+        SourceIdentifier: DYNAMODB_TABLE_ENCRYPTION_ENABLED
+
+  # Article 17 - Right to erasure
+  # S3 lifecycle policies for data retention
+  S3LifecyclePolicyCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-lifecycle-policy-check
+      Description: UK GDPR Article 17 - Ensures S3 buckets have lifecycle policies for data erasure.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_LIFECYCLE_POLICY_CHECK
+
+  # Article 25 - Data protection by design and by default
+  # Ensure proper access controls
+  S3BucketPublicReadProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-public-read-prohibited
+      Description: UK GDPR Article 25 - Ensures S3 buckets do not allow public read access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+
+  S3BucketPublicWriteProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-bucket-public-write-prohibited
+      Description: UK GDPR Article 25 - Ensures S3 buckets do not allow public write access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_WRITE_PROHIBITED
+
+  S3AccountLevelPublicAccessBlocksPeriodic:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-s3-account-level-public-access-blocks-periodic
+      Description: UK GDPR Article 25 - Ensures account-level S3 public access blocks are configured.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS_PERIODIC
+      InputParameters: |
+        {
+          "BlockPublicAcls": "true",
+          "IgnorePublicAcls": "true",
+          "BlockPublicPolicy": "true",
+          "RestrictPublicBuckets": "true"
+        }
+
+  RDSInstancePublicAccessCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-rds-instance-public-access-check
+      Description: UK GDPR Article 25 - Ensures RDS instances are not publicly accessible.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_INSTANCE_PUBLIC_ACCESS_CHECK
+
+  # Article 30 - Records of processing activities
+  # Audit logging requirements
+  CloudTrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloudtrail-enabled
+      Description: UK GDPR Article 30 - Ensures CloudTrail is enabled for audit records.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  CloudTrailLogFileValidationEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloud-trail-log-file-validation-enabled
+      Description: UK GDPR Article 30 - Ensures CloudTrail log file validation is enabled for integrity.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED
+
+  CloudTrailEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloud-trail-encryption-enabled
+      Description: UK GDPR Article 30 - Ensures CloudTrail logs are encrypted.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENCRYPTION_ENABLED
+
+  CloudTrailCloudWatchLogsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloud-trail-cloud-watch-logs-enabled
+      Description: UK GDPR Article 30 - Ensures CloudTrail is integrated with CloudWatch for monitoring.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED
+
+  VPCFlowLogsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-vpc-flow-logs-enabled
+      Description: UK GDPR Article 30 - Ensures VPC Flow Logs are enabled for network audit records.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_FLOW_LOGS_ENABLED
+
+  # Article 32 - Security of processing
+  # Access control and authentication
+  IAMUserMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-iam-user-mfa-enabled
+      Description: UK GDPR Article 32 - Ensures IAM users have MFA enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_MFA_ENABLED
+
+  RootAccountMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-root-account-mfa-enabled
+      Description: UK GDPR Article 32 - Ensures root account has MFA enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
+
+  IAMPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-iam-password-policy
+      Description: UK GDPR Article 32 - Ensures strong password policy is configured.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      InputParameters: |
+        {
+          "RequireUppercaseCharacters": "true",
+          "RequireLowercaseCharacters": "true",
+          "RequireSymbols": "true",
+          "RequireNumbers": "true",
+          "MinimumPasswordLength": "14",
+          "PasswordReusePrevention": "24",
+          "MaxPasswordAge": "90"
+        }
+
+  AccessKeysRotated:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-access-keys-rotated
+      Description: UK GDPR Article 32 - Ensures access keys are rotated within 90 days.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      InputParameters: |
+        {
+          "maxAccessKeyAge": "90"
+        }
+
+  # Network security
+  VPCDefaultSecurityGroupClosed:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-vpc-default-security-group-closed
+      Description: UK GDPR Article 32 - Ensures default security group restricts all traffic.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_DEFAULT_SECURITY_GROUP_CLOSED
+
+  RestrictedSSH:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-restricted-ssh
+      Description: UK GDPR Article 32 - Ensures SSH access is restricted.
+      Source:
+        Owner: AWS
+        SourceIdentifier: INCOMING_SSH_DISABLED
+
+  # Article 33 & 34 - Breach notification
+  # Security monitoring and alerting
+  GuardDutyEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-guardduty-enabled-centralized
+      Description: UK GDPR Articles 33/34 - Ensures GuardDuty is enabled for threat detection.
+      Source:
+        Owner: AWS
+        SourceIdentifier: GUARDDUTY_ENABLED_CENTRALIZED
+
+  SecurityHubEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-securityhub-enabled
+      Description: UK GDPR Articles 33/34 - Ensures Security Hub is enabled for security posture management.
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITYHUB_ENABLED
+
+  CloudWatchAlarmActionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-cloudwatch-alarm-action-check
+      Description: UK GDPR Articles 33/34 - Ensures CloudWatch alarms have actions for incident response.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDWATCH_ALARM_ACTION_CHECK
+      InputParameters: |
+        {
+          "alarmActionRequired": "true",
+          "insufficientDataActionRequired": "false",
+          "okActionRequired": "false"
+        }
+
+  # Article 44-49 - Transfers to third countries
+  # UK data residency
+  EC2InstanceNoPublicIP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-ec2-instance-no-public-ip
+      Description: UK GDPR Article 44-49 - Ensures EC2 instances do not have public IPs without explicit approval.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_NO_PUBLIC_IP
+
+  LambdaInsideVpc:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-lambda-inside-vpc
+      Description: UK GDPR Article 44-49 - Ensures Lambda functions are deployed inside VPC for network isolation.
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_INSIDE_VPC
+
+  # Data classification and tagging
+  RequiredTagsForDataClassification:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-required-tags-data-classification
+      Description: UK GDPR - Ensures resources have DataClassification tag for GDPR compliance tracking.
+      Source:
+        Owner: AWS
+        SourceIdentifier: REQUIRED_TAGS
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+          - AWS::RDS::DBInstance
+          - AWS::DynamoDB::Table
+          - AWS::EC2::Instance
+      InputParameters: |
+        {
+          "tag1Key": "DataClassification",
+          "tag2Key": "Owner"
+        }
+
+  # Backup and recovery
+  BackupPlanMinFrequencyAndMinRetentionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: gdpr-backup-plan-min-frequency-and-min-retention-check
+      Description: UK GDPR Article 32 - Ensures backup plans meet minimum frequency and retention requirements.
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK
+      InputParameters: !Sub |
+        {
+          "requiredFrequencyUnit": "days",
+          "requiredFrequencyValue": "1",
+          "requiredRetentionDays": "${DataRetentionDays}"
+        }
