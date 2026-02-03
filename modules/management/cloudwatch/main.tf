@@ -1,17 +1,6 @@
 # CloudWatch Monitoring Module - UK Centralized Monitoring
 # This module implements centralized CloudWatch monitoring for the UK AWS Secure Landing Zone
 
-terraform {
-  required_version = ">= 1.5.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # CloudWatch Log Groups for centralized logging
 resource "aws_cloudwatch_log_group" "log_groups" {
   for_each = var.log_groups
