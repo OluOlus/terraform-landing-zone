@@ -17,7 +17,7 @@ terraform {
   }
 }
 
-# Primary Provider (us-east-1 - London)
+# Primary Provider (uk-west-2 - London)
 provider "aws" {
   region = "us-east-1"
 
