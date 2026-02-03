@@ -249,7 +249,7 @@ Each module includes comprehensive README with:
 
 ### Reporting Security Issues
 
-Please report security vulnerabilities to: security@company.com
+Please report security vulnerabilities to: security@limesoftsystem.com
 
 ### Security Features
 
