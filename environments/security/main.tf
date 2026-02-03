@@ -35,6 +35,26 @@ provider "aws" {
   }
 }
 
+# Alias for alternate region (same as replica)
+provider "aws" {
+  alias  = "alternate"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
+# Alias for disaster recovery (same as replica for UK)
+provider "aws" {
+  alias  = "disaster_recovery"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
 locals {
   environment = "security"
   project     = "uk-landing-zone"
@@ -58,6 +78,11 @@ data "aws_region" "current" {}
 module "kms_security" {
   source = "../../modules/security/kms"
 
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
+
   key_name            = "security-services"
   key_alias           = "security-services"
   key_description     = "KMS key for security services encryption"
@@ -68,6 +93,11 @@ module "kms_security" {
 
 module "kms_logs" {
   source = "../../modules/security/kms"
+
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
 
   key_name                     = "security-logs"
   key_alias                    = "security-logs"
