@@ -294,12 +294,6 @@ resource "aws_config_remediation_configuration" "uk_tagging_remediation" {
     name         = "AutomationAssumeRole"
     static_value = aws_iam_role.remediation_lambda_role.arn
   }
-
-  tags = merge(var.common_tags, {
-    Name       = "uk-tagging-remediation-config"
-    Purpose    = "security-automation"
-    Compliance = "Security Standards,UK-GDPR"
-  })
 }
 
 # Output the dashboard widget configuration

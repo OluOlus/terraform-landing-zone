@@ -59,6 +59,11 @@ data "aws_organizations_organization" "current" {}
 module "kms_cloudtrail" {
   source = "../../modules/security/kms"
 
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
+
   key_name                = "cloudtrail-logs"
   key_alias               = "cloudtrail-logs"
   key_description         = "KMS key for CloudTrail log encryption"
@@ -71,6 +76,11 @@ module "kms_cloudtrail" {
 
 module "kms_logs" {
   source = "../../modules/security/kms"
+
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
 
   key_name                     = "log-archive"
   key_alias                    = "log-archive"
@@ -87,7 +97,8 @@ module "kms_replica" {
   source = "../../modules/security/kms"
 
   providers = {
-    aws = aws.replica
+    aws         = aws.replica
+    aws.replica = aws.replica
   }
 
   key_name            = "log-archive-replica"
@@ -103,6 +114,11 @@ module "kms_replica" {
 # Log Archive S3 Buckets
 module "log_archive" {
   source = "../../modules/logging/log-archive"
+
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
 
   primary_bucket_name = var.log_archive_bucket_name
   replica_bucket_name = "${var.log_archive_bucket_name}-replica"
@@ -144,7 +160,7 @@ module "cloudtrail" {
   source = "../../modules/logging/cloudtrail"
 
   trail_name            = "uk-organization-trail"
-  s3_bucket_name        = module.log_archive.primary_bucket_name
+  s3_bucket_name        = module.log_archive.primary_bucket_id
   kms_key_arn           = module.kms_cloudtrail.key_arn
   is_multi_region_trail = true
   is_organization_trail = true
@@ -330,6 +346,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "access_logs" {
   rule {
     id     = "expire-old-logs"
     status = "Enabled"
+
+    filter {}
 
     transition {
       days          = 90

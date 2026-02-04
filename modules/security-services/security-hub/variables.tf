@@ -1,11 +1,11 @@
 variable "aws_region" {
   description = "AWS region for Security Hub deployment"
   type        = string
-  default     = "us-east-1"
+  default     = "eu-west-2"
 
   validation {
-    condition     = contains(["us-west-2", "us-east-1"], var.aws_region)
-    error_message = "AWS region must be a specified region (us-west-2 or us-east-1) for UK data residency compliance."
+    condition     = contains(["eu-west-2", "eu-west-1"], var.aws_region)
+    error_message = "AWS region must be a UK region (eu-west-2 or eu-west-1) for UK data residency compliance."
   }
 }
 
@@ -75,11 +75,11 @@ variable "finding_aggregation_linking_mode" {
 variable "finding_aggregation_regions" {
   description = "List of regions for finding aggregation (when using SPECIFIED_REGIONS mode)"
   type        = list(string)
-  default     = ["us-west-2", "us-east-1"]
+  default     = ["eu-west-2", "eu-west-1"]
 
   validation {
-    condition     = alltrue([for region in var.finding_aggregation_regions : contains(["us-west-2", "us-east-1"], region)])
-    error_message = "Finding aggregation regions must only include specified regions (us-west-2, us-east-1) for UK data residency compliance."
+    condition     = alltrue([for region in var.finding_aggregation_regions : contains(["eu-west-2", "eu-west-1"], region)])
+    error_message = "Finding aggregation regions must only include UK regions (eu-west-2, eu-west-1) for UK data residency compliance."
   }
 }
 

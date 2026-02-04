@@ -39,8 +39,6 @@ resource "aws_cloudwatch_dashboard" "security_posture" {
       }
     ]
   })
-
-  tags = var.tags
 }
 
 # CloudWatch Dashboard for Compliance
@@ -69,8 +67,6 @@ resource "aws_cloudwatch_dashboard" "compliance" {
       }
     ]
   })
-
-  tags = var.tags
 }
 
 # CloudWatch Dashboard for Cost Usage
@@ -98,8 +94,6 @@ resource "aws_cloudwatch_dashboard" "cost_usage" {
       }
     ]
   })
-
-  tags = var.tags
 }
 
 # Security Hub Findings Alarm

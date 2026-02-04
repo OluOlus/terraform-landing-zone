@@ -44,6 +44,12 @@ variable "is_delegated_admin" {
   default     = false
 }
 
+variable "is_organization_admin" {
+  description = "Whether this account is the organization administrator"
+  type        = bool
+  default     = false
+}
+
 variable "admin_account_id" {
   description = "Account ID for GuardDuty organization admin"
   type        = string
@@ -120,7 +126,7 @@ variable "member_accounts" {
 variable "uk_regions" {
   description = "List of UK AWS regions"
   type        = list(string)
-  default     = ["us-west-2", "us-east-1"]
+  default     = ["eu-west-2", "eu-west-1"]
 }
 
 variable "environment" {

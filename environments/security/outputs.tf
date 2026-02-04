@@ -2,7 +2,7 @@
 
 output "security_hub_arn" {
   description = "ARN of the Security Hub"
-  value       = module.security_hub.hub_arn
+  value       = module.security_hub.security_hub_arn
 }
 
 output "guardduty_detector_id" {
@@ -10,9 +10,9 @@ output "guardduty_detector_id" {
   value       = module.guardduty.detector_id
 }
 
-output "config_recorder_id" {
-  description = "ID of the AWS Config recorder"
-  value       = module.config.recorder_id
+output "config_recorder_name" {
+  description = "Name of the AWS Config recorder"
+  value       = module.config.config_recorder_name
 }
 
 output "security_alerts_sns_topic_arn" {

@@ -2,7 +2,7 @@
 
 output "log_archive_bucket_name" {
   description = "Name of the primary log archive bucket"
-  value       = module.log_archive.primary_bucket_name
+  value       = module.log_archive.primary_bucket_id
 }
 
 output "log_archive_bucket_arn" {
@@ -12,7 +12,7 @@ output "log_archive_bucket_arn" {
 
 output "replica_bucket_name" {
   description = "Name of the replica log archive bucket"
-  value       = module.log_archive.replica_bucket_name
+  value       = module.log_archive.replica_bucket_id
 }
 
 output "cloudtrail_arn" {

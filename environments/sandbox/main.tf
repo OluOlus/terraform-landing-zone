@@ -26,6 +26,36 @@ provider "aws" {
   }
 }
 
+# Replica Provider (eu-west-1 - Ireland) for cross-region
+provider "aws" {
+  alias  = "replica"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
+# Alias for alternate region (same as replica)
+provider "aws" {
+  alias  = "alternate"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
+# Alias for disaster recovery
+provider "aws" {
+  alias  = "disaster_recovery"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
 locals {
   environment = "sandbox"
   project     = "uk-landing-zone"
@@ -48,6 +78,11 @@ data "aws_region" "current" {}
 # KMS Key for logs (minimal, shared)
 module "kms_logs" {
   source = "../../modules/security/kms"
+
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
 
   key_name                     = "sandbox-logs"
   key_alias                    = "sandbox-logs"
@@ -82,6 +117,12 @@ module "vpc" {
 module "guardduty" {
   source = "../../modules/security-services/guardduty"
 
+  providers = {
+    aws                   = aws
+    aws.alternate         = aws.alternate
+    aws.disaster_recovery = aws.disaster_recovery
+  }
+
   enable_detector              = true
   enable_s3_logs               = false # Disabled for cost savings
   enable_kubernetes_audit_logs = false # Disabled for cost savings
@@ -96,6 +137,10 @@ module "guardduty" {
 # Security Hub (basic only)
 module "security_hub" {
   source = "../../modules/security-services/security-hub"
+
+  providers = {
+    aws = aws
+  }
 
   aws_region               = "eu-west-2"
   enable_cis_standard      = false # Disabled for sandbox
