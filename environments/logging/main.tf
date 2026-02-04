@@ -129,16 +129,16 @@ module "log_archive" {
   organization_id = data.aws_organizations_organization.current.id
 
   # 7-year retention for UK compliance
-  cloudtrail_expiration_days          = 2555
-  flow_logs_expiration_days           = 2555
-  config_logs_expiration_days         = 2555
-  guardduty_findings_expiration_days  = 2555
-  securityhub_findings_expiration_days = 2555
+  cloudtrail_expiration_days            = 2555
+  flow_logs_expiration_days             = 2555
+  config_logs_expiration_days           = 2555
+  guardduty_findings_expiration_days    = 2555
+  securityhub_findings_expiration_days  = 2555
   network_firewall_logs_expiration_days = 2555
 
   # Lifecycle transitions for cost optimization
-  cloudtrail_transition_to_ia_days          = 90
-  cloudtrail_transition_to_glacier_days     = 180
+  cloudtrail_transition_to_ia_days           = 90
+  cloudtrail_transition_to_glacier_days      = 180
   cloudtrail_transition_to_deep_archive_days = 365
 
   flow_logs_transition_to_ia_days      = 90
@@ -159,13 +159,13 @@ module "log_archive" {
 module "cloudtrail" {
   source = "../../modules/logging/cloudtrail"
 
-  trail_name            = "uk-organization-trail"
-  s3_bucket_name        = module.log_archive.primary_bucket_id
-  kms_key_arn           = module.kms_cloudtrail.key_arn
-  is_multi_region_trail = true
-  is_organization_trail = true
+  trail_name             = "uk-organization-trail"
+  s3_bucket_name         = module.log_archive.primary_bucket_id
+  kms_key_arn            = module.kms_cloudtrail.key_arn
+  is_multi_region_trail  = true
+  is_organization_trail  = true
   enable_cloudwatch_logs = true
-  log_retention_days    = 2555 # 7 years
+  log_retention_days     = 2555 # 7 years
 
   common_tags = local.common_tags
 }
@@ -231,7 +231,7 @@ resource "aws_iam_role_policy" "replication_policy" {
         Resource = module.kms_logs.key_arn
         Condition = {
           StringLike = {
-            "kms:ViaService"    = "s3.eu-west-2.amazonaws.com"
+            "kms:ViaService"                   = "s3.eu-west-2.amazonaws.com"
             "kms:EncryptionContext:aws:s3:arn" = "arn:aws:s3:::${var.log_archive_bucket_name}/*"
           }
         }
@@ -244,7 +244,7 @@ resource "aws_iam_role_policy" "replication_policy" {
         Resource = module.kms_replica.key_arn
         Condition = {
           StringLike = {
-            "kms:ViaService"    = "s3.eu-west-1.amazonaws.com"
+            "kms:ViaService"                   = "s3.eu-west-1.amazonaws.com"
             "kms:EncryptionContext:aws:s3:arn" = "arn:aws:s3:::${var.log_archive_bucket_name}-replica/*"
           }
         }

@@ -99,17 +99,17 @@ module "transit_gateway" {
   tgw_name        = "uk-landing-zone-tgw"
   tgw_description = "UK Landing Zone centralized network hub"
 
-  amazon_side_asn                  = 64512
-  default_route_table_association  = "disable"
-  default_route_table_propagation  = "disable"
-  vpn_ecmp_support                 = "enable"
-  auto_accept_shared_attachments   = "enable"
+  amazon_side_asn                 = 64512
+  default_route_table_association = "disable"
+  default_route_table_propagation = "disable"
+  vpn_ecmp_support                = "enable"
+  auto_accept_shared_attachments  = "enable"
 
   # Route table configuration
-  create_production_route_table     = true
-  create_non_production_route_table = true
+  create_production_route_table      = true
+  create_non_production_route_table  = true
   create_shared_services_route_table = true
-  create_sandbox_route_table        = true
+  create_sandbox_route_table         = true
 
   # RAM sharing for organization
   enable_ram_share = true
