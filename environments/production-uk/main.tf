@@ -16,16 +16,36 @@ terraform {
   }
 }
 
+# Primary Provider (eu-west-2 - London)
 provider "aws" {
-  region = "us-east-1"
+  region = "eu-west-2"
   default_tags {
     tags = local.common_tags
   }
 }
 
+# Replica Provider (eu-west-1 - Ireland) for cross-region
 provider "aws" {
   alias  = "replica"
-  region = "us-west-2"
+  region = "eu-west-1"
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
+# Alias for alternate region (same as replica)
+provider "aws" {
+  alias  = "alternate"
+  region = "eu-west-1"
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
+# Alias for disaster recovery
+provider "aws" {
+  alias  = "disaster_recovery"
+  region = "eu-west-1"
   default_tags {
     tags = local.common_tags
   }
@@ -66,6 +86,11 @@ module "vpc" {
 module "kms_logs" {
   source = "../../modules/security/kms"
 
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
+
   key_name                     = "cloudwatch-logs-production"
   key_alias                    = "cloudwatch-logs-production"
   key_description              = "KMS key for CloudWatch Logs encryption in production"
@@ -77,6 +102,11 @@ module "kms_logs" {
 
 module "kms_s3" {
   source = "../../modules/security/kms"
+
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
 
   key_name            = "s3-production"
   key_alias           = "s3-production"
@@ -90,7 +120,13 @@ module "kms_s3" {
 module "guardduty" {
   source = "../../modules/security-services/guardduty"
 
-  enable_guardduty             = true
+  providers = {
+    aws                   = aws
+    aws.alternate         = aws.alternate
+    aws.disaster_recovery = aws.disaster_recovery
+  }
+
+  enable_detector              = true
   enable_s3_logs               = true
   enable_kubernetes_audit_logs = true
   enable_malware_protection    = true
@@ -102,11 +138,15 @@ module "guardduty" {
 module "security_hub" {
   source = "../../modules/security-services/security-hub"
 
-  enable_security_hub        = true
+  providers = {
+    aws = aws
+  }
+
+  aws_region               = "eu-west-2"
+  enable_cis_standard      = true
+  enable_default_standards = true
   enable_finding_aggregation = false
-  enable_aws_foundational    = true
-  enable_cis_benchmark       = true
-  common_tags                = local.common_tags
+  common_tags              = local.common_tags
 }
 
 # AWS Config

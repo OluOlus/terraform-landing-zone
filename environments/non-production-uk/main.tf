@@ -35,6 +35,26 @@ provider "aws" {
   }
 }
 
+# Alias for alternate region (same as replica)
+provider "aws" {
+  alias  = "alternate"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
+# Alias for disaster recovery
+provider "aws" {
+  alias  = "disaster_recovery"
+  region = "eu-west-1"
+
+  default_tags {
+    tags = local.common_tags
+  }
+}
+
 locals {
   environment = "non-production"
   project     = "uk-landing-zone"
@@ -58,6 +78,11 @@ data "aws_region" "current" {}
 module "kms_logs" {
   source = "../../modules/security/kms"
 
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
+
   key_name                     = "cloudwatch-logs-nonprod"
   key_alias                    = "cloudwatch-logs-nonprod"
   key_description              = "KMS key for CloudWatch Logs encryption in non-production"
@@ -70,6 +95,11 @@ module "kms_logs" {
 
 module "kms_s3" {
   source = "../../modules/security/kms"
+
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
 
   key_name            = "s3-nonprod"
   key_alias           = "s3-nonprod"
@@ -103,6 +133,12 @@ module "vpc" {
 module "guardduty" {
   source = "../../modules/security-services/guardduty"
 
+  providers = {
+    aws                   = aws
+    aws.alternate         = aws.alternate
+    aws.disaster_recovery = aws.disaster_recovery
+  }
+
   enable_detector              = true
   enable_s3_logs               = true
   enable_kubernetes_audit_logs = true
@@ -117,6 +153,10 @@ module "guardduty" {
 # Security Hub
 module "security_hub" {
   source = "../../modules/security-services/security-hub"
+
+  providers = {
+    aws = aws
+  }
 
   aws_region               = "eu-west-2"
   enable_cis_standard      = true

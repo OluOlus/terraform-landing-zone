@@ -139,6 +139,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "remediation_artifacts" {
     id     = "remediation_logs_lifecycle"
     status = "Enabled"
 
+    filter {}
+
     expiration {
       days = var.remediation_log_retention_days
     }

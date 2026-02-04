@@ -112,6 +112,10 @@ module "kms_logs" {
 module "security_hub" {
   source = "../../modules/security-services/security-hub"
 
+  providers = {
+    aws = aws
+  }
+
   aws_region                       = "eu-west-2"
   is_delegated_admin               = true
   admin_account_id                 = data.aws_caller_identity.current.account_id
@@ -129,6 +133,12 @@ module "security_hub" {
 # GuardDuty - Delegated Administrator
 module "guardduty" {
   source = "../../modules/security-services/guardduty"
+
+  providers = {
+    aws                   = aws
+    aws.alternate         = aws.alternate
+    aws.disaster_recovery = aws.disaster_recovery
+  }
 
   enable_detector              = true
   enable_s3_logs               = true

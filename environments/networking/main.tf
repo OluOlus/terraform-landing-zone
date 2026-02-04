@@ -59,6 +59,11 @@ data "aws_organizations_organization" "current" {}
 module "kms_network" {
   source = "../../modules/security/kms"
 
+  providers = {
+    aws         = aws
+    aws.replica = aws.replica
+  }
+
   key_name                     = "network-logs"
   key_alias                    = "network-logs"
   key_description              = "KMS key for network log encryption"
