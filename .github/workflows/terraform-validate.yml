@@ -28,23 +28,25 @@ jobs:
 
       - name: Terraform Init (modules)
         run: |
-          for dir in modules/*/; do
-            if [ -f "$dir/main.tf" ]; then
-              echo "Initializing $dir"
-              cd "$dir"
-              terraform init -backend=false
-              cd -
-            fi
+          # Only init modules - some have provider aliases that prevent standalone validation
+          find modules -name "main.tf" -type f | while read -r mainfile; do
+            dir=$(dirname "$mainfile")
+            echo "=== Initializing $dir ==="
+            cd "$dir"
+            terraform init -backend=false || true
+            cd "$GITHUB_WORKSPACE"
           done
 
-      - name: Terraform Validate (modules)
+      - name: Terraform Init and Validate (environments)
         run: |
-          for dir in modules/*/; do
+          # Validate environments which properly configure providers for modules
+          for dir in environments/*/; do
             if [ -f "$dir/main.tf" ]; then
-              echo "Validating $dir"
+              echo "=== Initializing and Validating $dir ==="
               cd "$dir"
+              terraform init -backend=false
               terraform validate
-              cd -
+              cd "$GITHUB_WORKSPACE"
             fi
           done
 
