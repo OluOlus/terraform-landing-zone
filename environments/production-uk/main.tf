@@ -142,11 +142,11 @@ module "security_hub" {
     aws = aws
   }
 
-  aws_region               = "eu-west-2"
-  enable_cis_standard      = true
-  enable_default_standards = true
+  aws_region                 = "eu-west-2"
+  enable_cis_standard        = true
+  enable_default_standards   = true
   enable_finding_aggregation = false
-  common_tags              = local.common_tags
+  common_tags                = local.common_tags
 }
 
 # AWS Config
