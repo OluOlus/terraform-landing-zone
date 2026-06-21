@@ -1,0 +1,124 @@
+name: Bug Report
+description: Report a bug or misconfiguration in the landing zone
+title: "[bug]: "
+labels: ["bug", "needs-triage"]
+assignees:
+  - OluOlus
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much detail as possible.
+        **Do not include real AWS account IDs, credentials, or sensitive data.**
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which module or environment is affected?
+      multiple: true
+      options:
+        - modules/security-services/guardduty
+        - modules/security-services/security-hub
+        - modules/security-services/security-automation
+        - modules/security-services/config
+        - modules/logging/cloudtrail
+        - modules/logging/log-archive
+        - modules/networking/vpc
+        - modules/networking/transit-gateway
+        - modules/networking/network-firewall
+        - modules/management/cicd
+        - modules/management/monitoring
+        - modules/avm-foundation/iam-identity-center
+        - modules/avm-foundation/organization
+        - environments/management
+        - environments/security
+        - environments/logging
+        - environments/networking
+        - environments/production-uk
+        - environments/non-production-uk
+        - environments/sandbox
+        - CI/CD workflows
+        - Bootstrap / scripts
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug.
+      placeholder: "When I run `terraform apply` in the security environment, I get..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Exact commands and configuration needed to reproduce the issue.
+      placeholder: |
+        1. Set `var.enable_guardduty = true`
+        2. Run `terraform plan` in `environments/security/`
+        3. Observe error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behaviour
+      description: What actually happened? Include error messages or plan output (redact account IDs).
+    validations:
+      required: true
+
+  - type: input
+    id: terraform_version
+    attributes:
+      label: Terraform Version
+      description: Output of `terraform version`
+      placeholder: "Terraform v1.9.0"
+    validations:
+      required: true
+
+  - type: input
+    id: aws_provider_version
+    attributes:
+      label: AWS Provider Version
+      description: Check `.terraform.lock.hcl` or `terraform providers`
+      placeholder: "hashicorp/aws v5.31.0"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: region
+    attributes:
+      label: AWS Region
+      options:
+        - eu-west-2 (London)
+        - eu-west-1 (Ireland)
+        - us-east-1
+        - us-west-2
+        - ap-southeast-1
+        - Other
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that might help diagnose the issue.
+    validations:
+      required: false

@@ -71,7 +71,7 @@ resource "aws_organizations_policy" "uk_data_residency" {
   count = var.enable_service_control_policies ? 1 : 0
 
   name        = "UK-Data-Residency-Policy"
-  description = "Enforces UK data residency by restricting AWS services to specified regions (us-west-2, us-east-1)"
+  description = "Enforces UK data residency by restricting AWS services to UK regions (eu-west-2 London, eu-west-1 Ireland)"
   type        = "SERVICE_CONTROL_POLICY"
   content     = file("${var.policy_path}/uk-data-residency.json")
 

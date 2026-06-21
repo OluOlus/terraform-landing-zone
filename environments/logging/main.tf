@@ -292,7 +292,7 @@ module "monitoring" {
 
   environment = local.environment
 
-  enable_security_monitoring   = false
+  enable_security_monitoring   = true
   enable_compliance_monitoring = true
   enable_cost_monitoring       = true
 

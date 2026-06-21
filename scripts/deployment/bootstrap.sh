@@ -8,7 +8,7 @@ set -euo pipefail
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-REGION="${AWS_DEFAULT_REGION:-us-east-1}"
+REGION="${AWS_DEFAULT_REGION:-eu-west-2}"
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 # Colors for output
@@ -53,8 +53,8 @@ check_prerequisites() {
     fi
     
     # Check region is UK
-    if [[ "$REGION" != "us-west-2" && "$REGION" != "us-east-1" ]]; then
-        log_error "Region must be us-west-2 or us-east-1 for UK data residency compliance"
+    if [[ "$REGION" != "eu-west-2" && "$REGION" != "eu-west-1" ]]; then
+        log_error "Region must be eu-west-2 (London) or eu-west-1 (Ireland) for UK data residency compliance"
         exit 1
     fi
     

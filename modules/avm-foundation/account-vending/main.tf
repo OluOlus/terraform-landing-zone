@@ -313,7 +313,7 @@ resource "aws_cloudformation_stack_set" "account_baseline" {
     failure_tolerance_count = 1
     max_concurrent_count    = 5
     region_concurrency_type = "PARALLEL"
-    region_order            = ["us-east-1", "us-west-2"]
+    region_order            = ["eu-west-2", "eu-west-1"]
   }
 
   template_body = jsonencode({

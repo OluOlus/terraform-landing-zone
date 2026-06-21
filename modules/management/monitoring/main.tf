@@ -88,7 +88,7 @@ resource "aws_cloudwatch_dashboard" "cost_usage" {
           ]
           period = 86400
           stat   = "Maximum"
-          region = "us-east-1"
+          region = var.aws_region
           title  = "Daily Cost Trends"
         }
       }

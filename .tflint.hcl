@@ -9,6 +9,20 @@ plugin "terraform" {
   enabled = true
 }
 
+plugin "aws" {
+  enabled = true
+  version = "0.32.0"
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+}
+
+rule "aws_instance_invalid_type" {
+  enabled = true
+}
+
+rule "aws_iam_policy_document_gov_friendly_arns" {
+  enabled = false
+}
+
 # Configure rules
 rule "terraform_required_version" {
   enabled = true

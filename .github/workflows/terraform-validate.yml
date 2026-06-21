@@ -9,11 +9,16 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate Terraform
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,9 +37,7 @@ jobs:
           find modules -name "main.tf" -type f | while read -r mainfile; do
             dir=$(dirname "$mainfile")
             echo "=== Initializing $dir ==="
-            cd "$dir"
-            terraform init -backend=false || true
-            cd "$GITHUB_WORKSPACE"
+            (cd "$dir" && terraform init -backend=false)
           done
 
       - name: Terraform Init and Validate (environments)
@@ -43,10 +46,7 @@ jobs:
           for dir in environments/*/; do
             if [ -f "$dir/main.tf" ]; then
               echo "=== Initializing and Validating $dir ==="
-              cd "$dir"
-              terraform init -backend=false
-              terraform validate
-              cd "$GITHUB_WORKSPACE"
+              (cd "$dir" && terraform init -backend=false && terraform validate)
             fi
           done
 

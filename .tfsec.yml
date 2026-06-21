@@ -44,11 +44,11 @@ include:
 # Custom checks for compliance
 custom_checks:
   - name: "UK_REGIONS_ONLY"
-    description: "Ensure resources are only created in specified regions"
+    description: "Ensure resources are only created in UK regions for data residency compliance"
     query: |
       resource[_].region as region
-      not region in ["us-west-2", "us-east-1"]
-    message: "Resources must be created in specified regions only (us-west-2, us-east-1)"
+      not region in ["eu-west-2", "eu-west-1"]
+    message: "Resources must be created in UK regions only (eu-west-2 London, eu-west-1 Ireland)"
     
   - name: "MANDATORY_TAGS"
     description: "Ensure mandatory UK tags are present"
@@ -82,8 +82,8 @@ config:
   aws:
     # region-specific configuration
     allowed_regions:
-      - "us-west-2"
-      - "us-east-1"
+      - "eu-west-2"
+      - "eu-west-1"
     
     # Required encryption
     require_encryption: true

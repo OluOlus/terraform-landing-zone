@@ -120,7 +120,11 @@ variable "member_accounts" {
 variable "uk_regions" {
   description = "List of UK AWS regions"
   type        = list(string)
-  default     = ["us-west-2", "us-east-1"]
+  default     = ["eu-west-2", "eu-west-1"]
+  validation {
+    condition     = alltrue([for r in var.uk_regions : contains(["eu-west-2", "eu-west-1"], r)])
+    error_message = "uk_regions must only contain UK regions: eu-west-2 (London) or eu-west-1 (Ireland)."
+  }
 }
 
 variable "environment" {

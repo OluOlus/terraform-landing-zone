@@ -243,10 +243,14 @@ resource "aws_lambda_function" "s3_public_access_remediation" {
     variables = {
       SNS_TOPIC_ARN      = var.sns_topic_arn
       REMEDIATION_BUCKET = var.remediation_bucket_name
-      DRY_RUN            = "false"
+      DRY_RUN            = tostring(var.remediation_dry_run)
       UK_COMPLIANCE_MODE = "true"
       LOG_LEVEL          = "INFO"
     }
+  }
+
+  dead_letter_config {
+    target_arn = var.sns_topic_arn
   }
 
   kms_key_arn = var.kms_key_arn
@@ -277,11 +281,15 @@ resource "aws_lambda_function" "unencrypted_volumes_remediation" {
     variables = {
       SNS_TOPIC_ARN      = var.sns_topic_arn
       REMEDIATION_BUCKET = var.remediation_bucket_name
-      DRY_RUN            = "false"
+      DRY_RUN            = tostring(var.remediation_dry_run)
       UK_COMPLIANCE_MODE = "true"
       LOG_LEVEL          = "INFO"
       KMS_KEY_ID         = var.kms_key_arn
     }
+  }
+
+  dead_letter_config {
+    target_arn = var.sns_topic_arn
   }
 
   kms_key_arn = var.kms_key_arn
@@ -312,7 +320,7 @@ resource "aws_lambda_function" "untagged_resources_remediation" {
     variables = {
       SNS_TOPIC_ARN      = var.sns_topic_arn
       REMEDIATION_BUCKET = var.remediation_bucket_name
-      DRY_RUN            = "false"
+      DRY_RUN            = tostring(var.remediation_dry_run)
       UK_COMPLIANCE_MODE = "true"
       LOG_LEVEL          = "INFO"
       MANDATORY_TAGS     = jsonencode(["DataClassification", "Environment", "CostCenter", "Owner", "Project"])
@@ -324,6 +332,10 @@ resource "aws_lambda_function" "untagged_resources_remediation" {
         Project            = "uk-landing-zone"
       })
     }
+  }
+
+  dead_letter_config {
+    target_arn = var.sns_topic_arn
   }
 
   kms_key_arn = var.kms_key_arn
@@ -359,6 +371,10 @@ resource "aws_lambda_function" "security_hub_orchestrator" {
     }
   }
 
+  dead_letter_config {
+    target_arn = var.sns_topic_arn
+  }
+
   kms_key_arn = var.kms_key_arn
 
   tags = merge(var.common_tags, {
@@ -386,6 +402,10 @@ resource "aws_lambda_function" "guardduty_orchestrator" {
       REMEDIATION_BUCKET = var.remediation_bucket_name
       LOG_LEVEL          = "INFO"
     }
+  }
+
+  dead_letter_config {
+    target_arn = var.sns_topic_arn
   }
 
   kms_key_arn = var.kms_key_arn
@@ -418,6 +438,10 @@ resource "aws_lambda_function" "config_orchestrator" {
       TAGGING_REMEDIATION_FUNCTION = var.enable_untagged_resources_remediation ? aws_lambda_function.untagged_resources_remediation[0].function_name : ""
       LOG_LEVEL                    = "INFO"
     }
+  }
+
+  dead_letter_config {
+    target_arn = var.sns_topic_arn
   }
 
   kms_key_arn = var.kms_key_arn

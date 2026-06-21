@@ -1,0 +1,25 @@
+# CODEOWNERS
+# Each line is a file pattern followed by one or more owners.
+# Owners are automatically requested for review when someone opens a pull
+# request that modifies the matching files.
+#
+# Replace the placeholder below with your GitHub username or team handle.
+# Examples:
+#   @myorg/platform-team
+#   @myusername
+
+# Default owner for everything in the repo
+* @OluOlus
+
+# Security-sensitive modules require explicit security team review
+terraform-landing-zone/modules/security-services/          @OluOlus
+terraform-landing-zone/modules/security/                   @OluOlus
+terraform-landing-zone/policies/scps/                      @OluOlus
+terraform-landing-zone/policies/iam-policies/              @OluOlus
+
+# CI/CD and GitHub Actions
+.github/workflows/                                          @OluOlus
+
+# Networking changes require network owner review
+terraform-landing-zone/modules/networking/                  @OluOlus
+terraform-landing-zone/environments/networking/             @OluOlus

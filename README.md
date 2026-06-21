@@ -3,6 +3,7 @@
 [![Terraform](https://img.shields.io/badge/Terraform-1.9+-623CE4?logo=terraform)](https://www.terraform.io/)
 [![AWS](https://img.shields.io/badge/AWS-Landing_Zone-FF9900?logo=amazon-aws)](https://aws.amazon.com/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](/.github/CONTRIBUTING.md)
 
 A production-ready, multi-account AWS environment designed for organizations requiring compliance with industry security standards and regulatory frameworks.
 

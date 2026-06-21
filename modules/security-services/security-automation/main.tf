@@ -26,7 +26,7 @@ data "aws_region" "current" {}
 # KMS key for encrypting Lambda function environment variables and logs
 resource "aws_kms_key" "security_automation" {
   description             = "KMS key for Security Automation module encryption"
-  deletion_window_in_days = 7
+  deletion_window_in_days = 30
   enable_key_rotation     = true
 
   policy = jsonencode({
@@ -254,6 +254,7 @@ module "remediation_functions" {
   # Pass through variables
   kms_key_arn                            = aws_kms_key.security_automation.arn
   remediation_bucket_name                = aws_s3_bucket.remediation_artifacts.bucket
+  remediation_bucket_arn                 = aws_s3_bucket.remediation_artifacts.arn
   sns_topic_arn                          = aws_sns_topic.security_automation_notifications.arn
   cloudwatch_log_group_name              = aws_cloudwatch_log_group.security_automation.name
   enable_s3_public_access_remediation    = var.enable_s3_public_access_remediation
@@ -261,6 +262,7 @@ module "remediation_functions" {
   enable_untagged_resources_remediation  = var.enable_untagged_resources_remediation
   lambda_timeout                         = var.lambda_timeout
   lambda_memory_size                     = var.lambda_memory_size
+  remediation_dry_run                    = var.remediation_dry_run
   common_tags                            = var.common_tags
 
   # Dependencies
@@ -284,12 +286,7 @@ resource "aws_cloudwatch_event_target" "security_hub_remediation" {
       account  = "$.account"
       region   = "$.region"
     }
-    input_template = jsonencode({
-      source   = "security-hub"
-      findings = "<findings>"
-      account  = "<account>"
-      region   = "<region>"
-    })
+    input_template = "{\"source\":\"security-hub\",\"findings\":<findings>,\"account\":<account>,\"region\":<region>}"
   }
 }
 
@@ -304,12 +301,7 @@ resource "aws_cloudwatch_event_target" "guardduty_remediation" {
       account = "$.account"
       region  = "$.region"
     }
-    input_template = jsonencode({
-      source  = "guardduty"
-      finding = "<finding>"
-      account = "<account>"
-      region  = "<region>"
-    })
+    input_template = "{\"source\":\"guardduty\",\"finding\":<finding>,\"account\":<account>,\"region\":<region>}"
   }
 }
 
@@ -327,15 +319,7 @@ resource "aws_cloudwatch_event_target" "config_remediation" {
       account             = "$.account"
       region              = "$.region"
     }
-    input_template = jsonencode({
-      source           = "config"
-      configRuleName   = "<configRuleName>"
-      resourceType     = "<resourceType>"
-      resourceId       = "<resourceId>"
-      evaluationResult = "<newEvaluationResult>"
-      account          = "<account>"
-      region           = "<region>"
-    })
+    input_template = "{\"source\":\"config\",\"configRuleName\":<configRuleName>,\"resourceType\":<resourceType>,\"resourceId\":<resourceId>,\"evaluationResult\":<newEvaluationResult>,\"account\":<account>,\"region\":<region>}"
   }
 }
 

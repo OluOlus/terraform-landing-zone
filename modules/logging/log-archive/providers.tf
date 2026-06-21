@@ -1,6 +1,6 @@
 # Provider Configuration for Log Archive Module
-# This module requires two providers: one for primary region (us-east-1)
-# and one for replica region (us-west-2)
+# This module requires two providers: one for primary region (eu-west-2 - London)
+# and one for replica region (eu-west-1 - Ireland)
 
 terraform {
   required_version = ">= 1.5.0"

@@ -63,9 +63,13 @@ variable "create_secondary_vault" {
 }
 
 variable "secondary_vault_region" {
-  description = "Region for secondary backup vault"
+  description = "Region for secondary backup vault (DR region)"
   type        = string
-  default     = "us-west-2"
+  default     = "eu-west-1"
+  validation {
+    condition     = contains(["eu-west-2", "eu-west-1"], var.secondary_vault_region)
+    error_message = "secondary_vault_region must be a UK region (eu-west-2 or eu-west-1) for UK data residency compliance."
+  }
 }
 
 variable "secondary_vault_kms_key_arn" {

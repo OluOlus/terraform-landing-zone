@@ -1,0 +1,85 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[feat]: "
+labels: ["enhancement", "needs-triage"]
+assignees:
+  - OluOlus
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement! Please describe what you'd like to see and why.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the landing zone does this relate to?
+      multiple: true
+      options:
+        - Security services (GuardDuty, Security Hub, Config)
+        - Networking (VPC, Transit Gateway, Network Firewall)
+        - IAM / Identity Center
+        - Logging and observability
+        - Automated remediation
+        - Cost management
+        - Compliance / conformance packs
+        - CI/CD pipeline
+        - Testing
+        - Documentation
+        - New module
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What is currently missing or painful?
+      placeholder: "Currently there is no way to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: |
+        Describe the feature you would like. If you have a Terraform snippet or architecture
+        sketch, include it here.
+      placeholder: |
+        Add a `modules/security-services/macie` module that:
+        - Enables Amazon Macie in the security account
+        - Configures organisation-wide discovery jobs
+        - Routes sensitive data findings to Security Hub
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative approaches?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Would you like to contribute this feature?
+      options:
+        - "Yes — I can open a PR"
+        - "Maybe — I could help with design/review"
+        - "No — I'm requesting it for someone else to implement"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Links, references, or any other context.
+    validations:
+      required: false

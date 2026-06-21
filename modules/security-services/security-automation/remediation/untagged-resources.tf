@@ -181,7 +181,7 @@ resource "aws_iam_role_policy" "resource_tagging_policy" {
         Resource = "*"
         Condition = {
           StringEquals = {
-            "aws:RequestedRegion" = ["us-west-2", "us-east-1"]
+            "aws:RequestedRegion" = ["eu-west-2", "eu-west-1"]
           }
         }
       },
@@ -209,7 +209,7 @@ resource "aws_iam_role_policy" "resource_tagging_policy" {
         Resource = "*"
         Condition = {
           StringEquals = {
-            "aws:RequestedRegion" = ["us-west-2", "us-east-1"]
+            "aws:RequestedRegion" = ["eu-west-2", "eu-west-1"]
           }
         }
       },
@@ -285,7 +285,7 @@ resource "aws_config_remediation_configuration" "uk_tagging_remediation" {
 
   resource_type              = "AWS::EC2::Instance"
   target_type                = "SSM_DOCUMENT"
-  target_id                  = "AWSConfigRemediation-RemoveUnrestrictedSourceInSecurityGroup"
+  target_id                  = "AWS-SetRequiredTags"
   target_version             = "1"
   automatic                  = false
   maximum_automatic_attempts = 3
@@ -293,6 +293,16 @@ resource "aws_config_remediation_configuration" "uk_tagging_remediation" {
   parameter {
     name         = "AutomationAssumeRole"
     static_value = aws_iam_role.remediation_lambda_role.arn
+  }
+
+  parameter {
+    name         = "TagKey"
+    static_value = "DataClassification"
+  }
+
+  parameter {
+    name         = "TagValue"
+    static_value = "internal"
   }
 }
 

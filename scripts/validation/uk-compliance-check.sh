@@ -36,13 +36,13 @@ check_uk_regions() {
     
     # Find all region references in Terraform files
     local non_uk_regions=$(grep -r "region\s*=" . --include="*.tf" --include="*.tfvars" | \
-        grep -v -E "(us-west-2|us-east-1|us-east-1)" | \
+        grep -v -E "(eu-west-2|eu-west-1|us-east-1)" | \
         grep -v -E "(#|//)" || true)
     
     if [[ -n "$non_uk_regions" ]]; then
         log_error "Non-specified regions found:"
         echo "$non_uk_regions"
-        log_error "Only us-west-2, us-east-1, and us-east-1 (for global services) are allowed"
+        log_error "Only eu-west-2 (London), eu-west-1 (Ireland), and us-east-1 (for global services only) are allowed"
     fi
     
     # Check for hardcoded regions in provider blocks

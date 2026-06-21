@@ -13,7 +13,11 @@ variable "vpc_cidr" {
 variable "aws_region" {
   description = "AWS region for resources"
   type        = string
-  default     = "us-east-1"
+  default     = "eu-west-2"
+  validation {
+    condition     = contains(["eu-west-2", "eu-west-1"], var.aws_region)
+    error_message = "aws_region must be a UK region (eu-west-2 or eu-west-1) for UK data residency compliance."
+  }
 }
 
 variable "public_subnet_cidrs" {

@@ -19,7 +19,7 @@ terraform {
   }
 }
 
-# Primary AWS Provider - London (us-east-1)
+# Primary AWS Provider - London (eu-west-2)
 provider "aws" {
   region = var.primary_region
 
@@ -38,7 +38,7 @@ provider "aws" {
   }
 }
 
-# Secondary AWS Provider - Ireland (us-west-2) for DR
+# Secondary AWS Provider - Ireland (eu-west-1) for DR
 provider "aws" {
   alias  = "secondary"
   region = var.secondary_region
@@ -56,9 +56,9 @@ provider "aws" {
   }
 }
 
-# Provider for US East 1 (required for some global services like CloudFront, IAM)
+# Provider for us-east-1 (required for global services: CloudFront, IAM, Route53, Billing)
 provider "aws" {
-  alias  = "us_east_1"
+  alias  = "global"
   region = "us-east-1"
 
   default_tags {
@@ -78,20 +78,20 @@ provider "aws" {
 variable "primary_region" {
   description = "Primary AWS region (London)"
   type        = string
-  default     = "us-east-1"
+  default     = "eu-west-2"
   validation {
-    condition     = var.primary_region == "us-east-1"
-    error_message = "Primary region must be us-east-1 (London) for UK data residency compliance."
+    condition     = var.primary_region == "eu-west-2"
+    error_message = "Primary region must be eu-west-2 (London) for UK data residency compliance."
   }
 }
 
 variable "secondary_region" {
   description = "Secondary AWS region (Ireland) for disaster recovery"
   type        = string
-  default     = "us-west-2"
+  default     = "eu-west-1"
   validation {
-    condition     = var.secondary_region == "us-west-2"
-    error_message = "Secondary region must be us-west-2 (Ireland) for UK data residency compliance."
+    condition     = var.secondary_region == "eu-west-1"
+    error_message = "Secondary region must be eu-west-1 (Ireland) for UK data residency compliance."
   }
 }
 

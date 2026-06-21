@@ -54,6 +54,10 @@ variable "admin_account_id" {
   description = "Account ID for GuardDuty organization admin"
   type        = string
   default     = null
+  validation {
+    condition     = var.admin_account_id == null || can(regex("^[0-9]{12}$", var.admin_account_id))
+    error_message = "admin_account_id must be a valid 12-digit AWS account ID."
+  }
 }
 
 variable "auto_enable_organization" {
@@ -97,7 +101,7 @@ variable "auto_enable_malware_protection" {
 variable "enable_publishing_destination" {
   description = "Enable GuardDuty publishing destination"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "findings_destination_arn" {
@@ -218,6 +222,12 @@ variable "enable_brexit_threat_intelligence" {
 
 variable "brexit_threat_list_location" {
   description = "S3 location of Brexit-related threat intelligence list"
+  type        = string
+  default     = null
+}
+
+variable "threat_intel_dlq_arn" {
+  description = "ARN of the SQS queue or SNS topic for threat intel Lambda dead-letter queue"
   type        = string
   default     = null
 }
