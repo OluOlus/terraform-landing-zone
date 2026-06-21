@@ -7,10 +7,6 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
-      configuration_aliases = [
-        aws.secondary,
-        aws.us_east_1
-      ]
     }
 
     random = {
@@ -41,11 +37,6 @@ terraform {
     archive = {
       source  = "hashicorp/archive"
       version = "~> 2.4"
-    }
-
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.2"
     }
   }
 }

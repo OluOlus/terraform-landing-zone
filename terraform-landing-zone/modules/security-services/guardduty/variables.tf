@@ -101,7 +101,7 @@ variable "auto_enable_malware_protection" {
 variable "enable_publishing_destination" {
   description = "Enable GuardDuty publishing destination"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "findings_destination_arn" {
@@ -230,12 +230,6 @@ variable "threat_intel_dlq_arn" {
   description = "ARN of the SQS queue or SNS topic for threat intel Lambda dead-letter queue"
   type        = string
   default     = null
-}
-
-variable "enable_publishing_destination" {
-  description = "Enable GuardDuty findings publishing to S3"
-  type        = bool
-  default     = true
 }
 
 variable "enable_cni_threat_intelligence" {

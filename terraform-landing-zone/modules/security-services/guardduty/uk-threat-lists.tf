@@ -189,6 +189,33 @@ resource "aws_lambda_function" "threat_intel_updater" {
   })
 }
 
+# CloudWatch alarm for threat intel Lambda errors — alerts on any invocation failure
+resource "aws_cloudwatch_metric_alarm" "threat_intel_updater_errors" {
+  count = var.enable_automated_threat_intel_updates ? 1 : 0
+
+  alarm_name          = "uk-guardduty-threat-intel-updater-errors"
+  alarm_description   = "Fires when the GuardDuty threat intelligence updater Lambda fails"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 1
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    FunctionName = aws_lambda_function.threat_intel_updater[0].function_name
+  }
+
+  alarm_actions = compact([var.threat_intel_dlq_arn])
+
+  tags = merge(var.common_tags, {
+    Name    = "uk-guardduty-threat-intel-updater-errors"
+    Purpose = "ThreatIntelligenceMonitoring"
+  })
+}
+
 # IAM role for threat intelligence updater Lambda
 resource "aws_iam_role" "threat_intel_updater" {
   count = var.enable_automated_threat_intel_updates ? 1 : 0
