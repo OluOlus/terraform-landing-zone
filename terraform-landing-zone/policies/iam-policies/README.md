@@ -19,7 +19,7 @@ This directory contains IAM policy files that support the IAM Identity Center pe
 - Cost and compliance reporting capabilities
 
 **UK Compliance Controls**:
-- specified region restriction (us-west-2, us-east-1 only)
+- UK region restriction (eu-west-2 London, eu-west-1 Ireland only)
 - Mandatory tagging enforcement for data classification
 - CloudTrail and KMS key deletion protection
 - Audit trail immutability controls
@@ -116,7 +116,7 @@ This directory contains IAM policy files that support the IAM Identity Center pe
 
 ### Data Residency Enforcement
 All policies enforce UK data residency through:
-- Regional restrictions to us-west-2 and us-east-1
+- Regional restrictions to eu-west-2 (London) and eu-west-1 (Ireland)
 - Global service exceptions for IAM, Organizations, Route53, CloudFront
 - Conditional access based on requested regions
 

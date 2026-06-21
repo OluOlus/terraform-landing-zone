@@ -2,6 +2,8 @@
 # Provides centralized monitoring, dashboards, and alarms
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -37,8 +39,6 @@ resource "aws_cloudwatch_dashboard" "security_posture" {
       }
     ]
   })
-
-  tags = var.tags
 }
 
 # CloudWatch Dashboard for Compliance
@@ -67,8 +67,6 @@ resource "aws_cloudwatch_dashboard" "compliance" {
       }
     ]
   })
-
-  tags = var.tags
 }
 
 # CloudWatch Dashboard for Cost Usage
@@ -90,14 +88,12 @@ resource "aws_cloudwatch_dashboard" "cost_usage" {
           ]
           period = 86400
           stat   = "Maximum"
-          region = "us-east-1"
+          region = var.aws_region
           title  = "Daily Cost Trends"
         }
       }
     ]
   })
-
-  tags = var.tags
 }
 
 # Security Hub Findings Alarm

@@ -3,6 +3,8 @@
 # with support for Security Standards Cloud Security Principles
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

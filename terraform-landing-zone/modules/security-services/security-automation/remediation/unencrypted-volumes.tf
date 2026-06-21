@@ -166,7 +166,7 @@ resource "aws_iam_role_policy" "volume_encryption_policy" {
         Resource = "*"
         Condition = {
           StringEquals = {
-            "aws:RequestedRegion" = ["us-west-2", "us-east-1"]
+            "aws:RequestedRegion" = ["eu-west-2", "eu-west-1"]
           }
         }
       },
@@ -181,7 +181,7 @@ resource "aws_iam_role_policy" "volume_encryption_policy" {
         Resource = "*"
         Condition = {
           StringEquals = {
-            "aws:RequestedRegion" = ["us-west-2", "us-east-1"]
+            "aws:RequestedRegion" = ["eu-west-2", "eu-west-1"]
           }
         }
       }

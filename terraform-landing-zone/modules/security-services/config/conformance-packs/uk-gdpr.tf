@@ -334,7 +334,7 @@ resource "aws_config_config_rule" "gdpr_cross_border_transfers" {
   }
 
   input_parameters = jsonencode({
-    allowedDestinationRegions = "us-west-2,us-east-1"
+    allowedDestinationRegions = "eu-west-2,eu-west-1"
   })
 
   scope {

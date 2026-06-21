@@ -1,0 +1,366 @@
+# UK Cyber Essentials Compliance Pack
+# Based on UK Government Cyber Essentials scheme requirements
+# https://www.ncsc.gov.uk/cyberessentials/overview
+
+Parameters:
+  MaxAccessKeyAge:
+    Type: String
+    Default: "90"
+    Description: Maximum age in days for access keys before rotation
+
+Resources:
+  # Control 1: Firewalls
+  # Boundary firewalls and internet gateways
+
+  VPCDefaultSecurityGroupClosed:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-vpc-default-security-group-closed
+      Description: Cyber Essentials Control 1 - Ensures default security group restricts all traffic.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_DEFAULT_SECURITY_GROUP_CLOSED
+
+  RestrictedSSH:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-restricted-ssh
+      Description: Cyber Essentials Control 1 - Ensures SSH access is not open to 0.0.0.0/0.
+      Source:
+        Owner: AWS
+        SourceIdentifier: INCOMING_SSH_DISABLED
+
+  RestrictedRDP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-restricted-common-ports
+      Description: Cyber Essentials Control 1 - Ensures common management ports are restricted.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RESTRICTED_INCOMING_TRAFFIC
+      InputParameters: |
+        {
+          "blockedPort1": "3389",
+          "blockedPort2": "22",
+          "blockedPort3": "23",
+          "blockedPort4": "445",
+          "blockedPort5": "135"
+        }
+
+  SecurityGroupAttached:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-ec2-security-group-attached-to-eni-periodic
+      Description: Cyber Essentials Control 1 - Ensures ENIs have security groups attached.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_SECURITY_GROUP_ATTACHED_TO_ENI_PERIODIC
+
+  VPCNetworkACLUnusedCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-vpc-network-acl-unused-check
+      Description: Cyber Essentials Control 1 - Checks for unused Network ACLs.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_NETWORK_ACL_UNUSED_CHECK
+
+  # Control 2: Secure Configuration
+  # Remove unnecessary software and default accounts
+
+  EC2InstanceNoPublicIP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-ec2-instance-no-public-ip
+      Description: Cyber Essentials Control 2 - Ensures EC2 instances do not have public IPs by default.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_NO_PUBLIC_IP
+
+  RDSInstancePublicAccessCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-rds-instance-public-access-check
+      Description: Cyber Essentials Control 2 - Ensures RDS instances are not publicly accessible.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_INSTANCE_PUBLIC_ACCESS_CHECK
+
+  RedshiftClusterPublicAccessCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-redshift-cluster-public-access-check
+      Description: Cyber Essentials Control 2 - Ensures Redshift clusters are not publicly accessible.
+      Source:
+        Owner: AWS
+        SourceIdentifier: REDSHIFT_CLUSTER_PUBLIC_ACCESS_CHECK
+
+  LambdaFunctionPublicAccessProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-lambda-function-public-access-prohibited
+      Description: Cyber Essentials Control 2 - Ensures Lambda functions are not publicly accessible.
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_FUNCTION_PUBLIC_ACCESS_PROHIBITED
+
+  S3BucketPublicReadProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-s3-bucket-public-read-prohibited
+      Description: Cyber Essentials Control 2 - Ensures S3 buckets do not allow public read access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+
+  S3BucketPublicWriteProhibited:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-s3-bucket-public-write-prohibited
+      Description: Cyber Essentials Control 2 - Ensures S3 buckets do not allow public write access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_WRITE_PROHIBITED
+
+  S3AccountLevelPublicAccessBlocksPeriodic:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-s3-account-level-public-access-blocks-periodic
+      Description: Cyber Essentials Control 2 - Ensures S3 account-level public access blocks are configured.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS_PERIODIC
+      InputParameters: |
+        {
+          "BlockPublicAcls": "true",
+          "IgnorePublicAcls": "true",
+          "BlockPublicPolicy": "true",
+          "RestrictPublicBuckets": "true"
+        }
+
+  # Control 3: User Access Control
+  # Manage user accounts and privileges
+
+  IAMUserMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-user-mfa-enabled
+      Description: Cyber Essentials Control 3 - Ensures IAM users have MFA enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_MFA_ENABLED
+
+  MFAEnabledForIAMConsoleAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-mfa-enabled-for-iam-console-access
+      Description: Cyber Essentials Control 3 - Ensures MFA is enabled for IAM console access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS
+
+  RootAccountMFAEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-root-account-mfa-enabled
+      Description: Cyber Essentials Control 3 - Ensures root account has MFA enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
+
+  IAMRootAccessKeyCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-root-access-key-check
+      Description: Cyber Essentials Control 3 - Ensures root account has no access keys.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_ROOT_ACCESS_KEY_CHECK
+
+  IAMPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-password-policy
+      Description: Cyber Essentials Control 3 - Ensures strong password policy is configured.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      InputParameters: |
+        {
+          "RequireUppercaseCharacters": "true",
+          "RequireLowercaseCharacters": "true",
+          "RequireSymbols": "true",
+          "RequireNumbers": "true",
+          "MinimumPasswordLength": "12",
+          "PasswordReusePrevention": "12",
+          "MaxPasswordAge": "90"
+        }
+
+  IAMUserUnusedCredentialsCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-user-unused-credentials-check
+      Description: Cyber Essentials Control 3 - Ensures unused credentials are disabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_UNUSED_CREDENTIALS_CHECK
+      InputParameters: |
+        {
+          "maxCredentialUsageAge": "90"
+        }
+
+  AccessKeysRotated:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-access-keys-rotated
+      Description: Cyber Essentials Control 3 - Ensures access keys are rotated regularly.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      InputParameters: !Sub |
+        {
+          "maxAccessKeyAge": "${MaxAccessKeyAge}"
+        }
+
+  IAMPolicyNoStatementsWithAdminAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-policy-no-statements-with-admin-access
+      Description: Cyber Essentials Control 3 - Ensures IAM policies do not grant full admin access.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_POLICY_NO_STATEMENTS_WITH_ADMIN_ACCESS
+
+  IAMUserNoPoliciesCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-user-no-policies-check
+      Description: Cyber Essentials Control 3 - Ensures IAM users use groups instead of direct policies.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_NO_POLICIES_CHECK
+
+  IAMGroupHasUsersCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-iam-group-has-users-check
+      Description: Cyber Essentials Control 3 - Ensures IAM groups have users attached.
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_GROUP_HAS_USERS_CHECK
+
+  # Control 4: Malware Protection
+  # Protection from viruses and malware
+
+  GuardDutyEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-guardduty-enabled-centralized
+      Description: Cyber Essentials Control 4 - Ensures GuardDuty is enabled for malware detection.
+      Source:
+        Owner: AWS
+        SourceIdentifier: GUARDDUTY_ENABLED_CENTRALIZED
+
+  ECRPrivateImageScanningEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-ecr-private-image-scanning-enabled
+      Description: Cyber Essentials Control 4 - Ensures ECR image scanning is enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ECR_PRIVATE_IMAGE_SCANNING_ENABLED
+
+  # Control 5: Security Update Management
+  # Keep devices and software up to date
+
+  EC2InstanceManagedBySSM:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-ec2-instance-managed-by-systems-manager
+      Description: Cyber Essentials Control 5 - Ensures EC2 instances are managed by SSM for patching.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_MANAGED_BY_SSM
+
+  EC2ManagedInstancePatchComplianceStatusCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-ec2-managedinstance-patch-compliance-status-check
+      Description: Cyber Essentials Control 5 - Ensures EC2 instances are patch compliant.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK
+
+  RDSAutomaticMinorVersionUpgradeEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-rds-automatic-minor-version-upgrade-enabled
+      Description: Cyber Essentials Control 5 - Ensures RDS automatic minor version upgrade is enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_AUTOMATIC_MINOR_VERSION_UPGRADE_ENABLED
+
+  ElasticacheRedisClusterAutomaticBackupCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-elasticache-redis-cluster-automatic-backup-check
+      Description: Cyber Essentials Control 5 - Ensures ElastiCache Redis clusters have automatic backups.
+      Source:
+        Owner: AWS
+        SourceIdentifier: ELASTICACHE_REDIS_CLUSTER_AUTOMATIC_BACKUP_CHECK
+
+  # Additional security monitoring
+  CloudTrailEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-cloudtrail-enabled
+      Description: Cyber Essentials - Ensures CloudTrail is enabled for audit logging.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+
+  VPCFlowLogsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-vpc-flow-logs-enabled
+      Description: Cyber Essentials - Ensures VPC Flow Logs are enabled for network monitoring.
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_FLOW_LOGS_ENABLED
+
+  SecurityHubEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-securityhub-enabled
+      Description: Cyber Essentials - Ensures Security Hub is enabled for security posture management.
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITYHUB_ENABLED
+
+  # Encryption requirements
+  S3BucketServerSideEncryptionEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-s3-bucket-server-side-encryption-enabled
+      Description: Cyber Essentials - Ensures S3 buckets have encryption enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+
+  RDSStorageEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-rds-storage-encrypted
+      Description: Cyber Essentials - Ensures RDS instances have encryption enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_STORAGE_ENCRYPTED
+
+  EBSEncryptionByDefault:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ce-ec2-ebs-encryption-by-default
+      Description: Cyber Essentials - Ensures EBS encryption is enabled by default.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_EBS_ENCRYPTION_BY_DEFAULT

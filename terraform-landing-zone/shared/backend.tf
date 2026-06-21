@@ -6,7 +6,7 @@ terraform {
     # These values will be provided via backend config files or CLI
     # bucket         = "uk-landing-zone-terraform-state-${account_id}"
     # key            = "terraform.tfstate"
-    # region         = "us-east-1"
+    # region         = "eu-west-2"
     # dynamodb_table = "uk-landing-zone-terraform-locks"
 
     # Security and compliance settings

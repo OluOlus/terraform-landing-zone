@@ -171,7 +171,7 @@ resource "aws_securityhub_insight" "personnel_security_violations" {
 
 # Custom action for Security Standards compliance remediation
 resource "aws_securityhub_action_target" "ncsc_remediation" {
-  name        = "Security Standards Compliance"
+  name        = "NCSC Compliance"
   identifier  = "ncscCompliance"
   description = "Trigger automated remediation for Security Standards compliance violations"
 }

@@ -33,12 +33,12 @@ variable "common_tags" {
 variable "aws_regions" {
   description = "List of allowed AWS regions for UK data residency"
   type        = list(string)
-  default     = ["us-west-2", "us-east-1"]
+  default     = ["eu-west-2", "eu-west-1"]
   validation {
     condition = alltrue([
-      for region in var.aws_regions : contains(["us-west-2", "us-east-1"], region)
+      for region in var.aws_regions : contains(["eu-west-2", "eu-west-1"], region)
     ])
-    error_message = "Only specified regions (us-west-2, us-east-1) are allowed for data residency compliance."
+    error_message = "Only UK regions (eu-west-2 London, eu-west-1 Ireland) are allowed for UK data residency compliance."
   }
 }
 

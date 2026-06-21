@@ -3,6 +3,8 @@
 # with support for Security Standards Cloud Security Principles and threat detection
 
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -44,14 +46,6 @@ resource "aws_networkfirewall_firewall_policy" "main" {
     # Stateful engine options
     stateful_engine_options {
       rule_order = var.stateful_rule_order
-    }
-
-    # TLS inspection configuration
-    dynamic "tls_inspection_configuration_arn" {
-      for_each = var.tls_inspection_configuration_arn != null ? [1] : []
-      content {
-        resource_arn = var.tls_inspection_configuration_arn
-      }
     }
   }
 

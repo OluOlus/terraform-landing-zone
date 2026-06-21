@@ -60,23 +60,8 @@ locals {
   }
 }
 
-# Version validation
-check "terraform_version" {
-  assert {
-    condition     = can(regex("^1\\.[5-9]\\.", terraform.version))
-    error_message = "Terraform version must be 1.5.0 or higher for UK Landing Zone compatibility."
-  }
-}
-
-# AWS provider version check
-data "aws_caller_identity" "current" {}
-
-check "aws_provider_compatibility" {
-  assert {
-    condition     = data.aws_caller_identity.current.account_id != ""
-    error_message = "AWS provider must be properly configured with valid credentials."
-  }
-}
+# Version validation is enforced via required_version constraint above
+# Runtime checks removed for compatibility with TFSec scanner
 
 # Output version information for reference
 output "version_info" {

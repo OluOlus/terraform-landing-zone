@@ -1,15 +1,5 @@
-# KMS Encryption Module - UK Data Protection
-# This module implements encryption key management for the UK AWS Secure Landing Zone
-# with support for Security Standards Cloud Security Principles and GDPR compliance
-
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
+# KMS Encryption Module - Data Protection
+# This module implements encryption key management with support for industry security standards and compliance requirements
 
 # KMS Key for general encryption
 resource "aws_kms_key" "main" {

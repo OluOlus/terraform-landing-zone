@@ -7,7 +7,7 @@ data "aws_region" "alternate" {
   provider = aws.alternate
 }
 
-# GuardDuty detector in alternate specified region (us-west-2 if primary is us-east-1)
+# GuardDuty detector in alternate UK region (eu-west-1 Ireland if primary is eu-west-2 London)
 resource "aws_guardduty_detector" "uk_alternate" {
   count    = var.enable_cross_region ? 1 : 0
   provider = aws.alternate

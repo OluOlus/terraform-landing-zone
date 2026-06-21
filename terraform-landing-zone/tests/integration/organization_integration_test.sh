@@ -77,10 +77,10 @@ for POLICY_NAME in "${EXPECTED_POLICIES[@]}"; do
         POLICY_CONTENT=$(aws organizations describe-policy --policy-id "$POLICY_ID" \
             --query 'Policy.Content' --output text)
         
-        if echo "$POLICY_CONTENT" | grep -q "us-west-2\|us-east-1"; then
-            echo "UK Data Residency Policy contains specified regions"
+        if echo "$POLICY_CONTENT" | grep -q "eu-west-2\|eu-west-1"; then
+            echo "UK Data Residency Policy contains UK regions"
         else
-            echo "ERROR: UK Data Residency Policy does not contain specified regions"
+            echo "ERROR: UK Data Residency Policy does not contain UK regions (eu-west-2, eu-west-1)"
             exit 1
         fi
     fi

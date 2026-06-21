@@ -2,16 +2,7 @@
 # This module implements centralized log storage for the UK AWS Secure Landing Zone
 # with support for Security Standards Cloud Security Principles, GDPR compliance, and 7-year retention
 
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-# Primary Log Archive S3 Bucket (us-east-1)
+# Primary Log Archive S3 Bucket (eu-west-2 - London)
 resource "aws_s3_bucket" "log_archive_primary" {
   bucket        = var.primary_bucket_name
   force_destroy = var.force_destroy
@@ -21,7 +12,7 @@ resource "aws_s3_bucket" "log_archive_primary" {
     Purpose            = "Centralized log archive - Primary"
     DataClassification = "confidential"
     Compliance         = "Security Standards-UK-GDPR"
-    Region             = "us-east-1"
+    Region             = "eu-west-2"
   })
 }
 
@@ -341,7 +332,7 @@ resource "aws_s3_bucket_policy" "log_archive_primary" {
   })
 }
 
-# Replication Bucket (us-west-2) - for DR
+# Replication Bucket (eu-west-1 - Ireland) - for DR
 resource "aws_s3_bucket" "log_archive_replica" {
   count         = var.enable_cross_region_replication ? 1 : 0
   provider      = aws.replica
@@ -353,7 +344,7 @@ resource "aws_s3_bucket" "log_archive_replica" {
     Purpose            = "Centralized log archive - Replica"
     DataClassification = "confidential"
     Compliance         = "Security Standards-UK-GDPR"
-    Region             = "us-west-2"
+    Region             = "eu-west-1"
   })
 }
 

@@ -54,6 +54,12 @@ variable "lambda_memory_size" {
   default     = 512
 }
 
+variable "remediation_dry_run" {
+  description = "Enable dry-run mode: log actions without making changes"
+  type        = bool
+  default     = false
+}
+
 variable "common_tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)

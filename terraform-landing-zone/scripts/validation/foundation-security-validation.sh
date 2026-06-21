@@ -302,10 +302,10 @@ validate_service_control_policies() {
     
     # Validate UK data residency policy
     if [[ -f "policies/scps/uk-data-residency.json" ]]; then
-        if grep -q "us-west-2\|us-east-1" policies/scps/uk-data-residency.json; then
-            log_pass "UK data residency policy includes specified regions"
+        if grep -q "eu-west-2\|eu-west-1" policies/scps/uk-data-residency.json; then
+            log_pass "UK data residency policy includes UK regions (eu-west-2, eu-west-1)"
         else
-            log_error "UK data residency policy missing specified regions"
+            log_error "UK data residency policy missing UK regions (eu-west-2, eu-west-1)"
         fi
         
         if grep -q "DenyNonUKRegions" policies/scps/uk-data-residency.json; then
@@ -348,10 +348,10 @@ validate_iam_policies() {
             log_error "Security admin policy missing security services"
         fi
         
-        if grep -q "us-west-2\|us-east-1" policies/iam-policies/security-admin.json; then
-            log_pass "Security admin policy includes specified region restrictions"
+        if grep -q "eu-west-2\|eu-west-1" policies/iam-policies/security-admin.json; then
+            log_pass "Security admin policy includes UK region restrictions"
         else
-            log_warn "Security admin policy may not include specified region restrictions"
+            log_warn "Security admin policy may not include UK region restrictions (eu-west-2, eu-west-1)"
         fi
     fi
     
@@ -415,12 +415,12 @@ validate_uk_compliance() {
         log_error "No specified region references found in configuration"
     fi
     
-    # Check for non-specified regions (should be minimal)
-    local non_uk_regions=$(grep -r "us-east-1\|us-west-[12]\|ap-\|ca-\|sa-" . --include="*.tf" --include="*.json" | grep -v "global\|cloudfront\|route53" | wc -l)
+    # Check for non-UK regions (should be minimal - only us-east-1 for global services)
+    local non_uk_regions=$(grep -r "us-west-[12]\|ap-\|ca-\|sa-\|af-\|me-" . --include="*.tf" --include="*.json" | grep -v "global\|cloudfront\|route53" | wc -l)
     if [[ $non_uk_regions -eq 0 ]]; then
-        log_pass "No non-specified regions found in configuration"
+        log_pass "No non-UK regions found in configuration"
     else
-        log_warn "Non-specified regions found in configuration ($non_uk_regions references) - verify these are for global services only"
+        log_warn "Non-UK regions found in configuration ($non_uk_regions references) - verify these are for global services only"
     fi
     
     # Check for mandatory tagging

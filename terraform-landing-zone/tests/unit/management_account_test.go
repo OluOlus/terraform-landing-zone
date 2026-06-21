@@ -90,10 +90,10 @@ func TestManagementAccountModuleRegionValidation(t *testing.T) {
 		NoColor: true,
 	}
 
-	// This should fail validation
+	// This should fail validation since US regions are not allowed in UK landing zone
 	_, err := terraform.InitAndPlanE(t, terraformOptions)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "Only UK regions (eu-west-1, eu-west-2) are allowed")
+	assert.Contains(t, err.Error(), "Only UK regions (eu-west-2 London, eu-west-1 Ireland) are allowed")
 }
 
 func TestManagementAccountModuleConfigDeliveryFrequency(t *testing.T) {

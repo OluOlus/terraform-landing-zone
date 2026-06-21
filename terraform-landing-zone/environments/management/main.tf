@@ -2,7 +2,7 @@
 # Configures the Management Account with Organizations, Identity Center, and centralized services
 
 terraform {
-  required_version = "~> 1.9"
+  required_version = ">= 1.5.0"
 
   required_providers {
     aws = {
@@ -17,19 +17,19 @@ terraform {
   }
 }
 
-# Primary Provider (us-east-1 - London)
+# Primary Provider (eu-west-2 - London)
 provider "aws" {
-  region = "us-east-1"
+  region = "eu-west-2"
 
   default_tags {
     tags = local.common_tags
   }
 }
 
-# Replica Provider (us-west-2 - Ireland) for DR
+# Replica Provider (eu-west-1 - Ireland) for DR
 provider "aws" {
   alias  = "replica"
-  region = "us-west-2"
+  region = "eu-west-1"
 
   default_tags {
     tags = local.common_tags

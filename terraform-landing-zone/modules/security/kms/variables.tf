@@ -159,9 +159,13 @@ variable "create_replica_key" {
 }
 
 variable "replica_region" {
-  description = "Region for replica key (e.g., us-west-2)"
+  description = "Region for replica KMS key (e.g., eu-west-1 for Ireland DR)"
   type        = string
-  default     = "us-west-2"
+  default     = "eu-west-1"
+  validation {
+    condition     = contains(["eu-west-2", "eu-west-1"], var.replica_region)
+    error_message = "replica_region must be a UK region (eu-west-2 or eu-west-1) for UK data residency compliance."
+  }
 }
 
 # Common Tags

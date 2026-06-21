@@ -44,10 +44,20 @@ variable "is_delegated_admin" {
   default     = false
 }
 
+variable "is_organization_admin" {
+  description = "Whether this account is the organization administrator"
+  type        = bool
+  default     = false
+}
+
 variable "admin_account_id" {
   description = "Account ID for GuardDuty organization admin"
   type        = string
   default     = null
+  validation {
+    condition     = var.admin_account_id == null || can(regex("^[0-9]{12}$", var.admin_account_id))
+    error_message = "admin_account_id must be a valid 12-digit AWS account ID."
+  }
 }
 
 variable "auto_enable_organization" {
@@ -120,7 +130,7 @@ variable "member_accounts" {
 variable "uk_regions" {
   description = "List of UK AWS regions"
   type        = list(string)
-  default     = ["us-west-2", "us-east-1"]
+  default     = ["eu-west-2", "eu-west-1"]
 }
 
 variable "environment" {
@@ -214,6 +224,18 @@ variable "brexit_threat_list_location" {
   description = "S3 location of Brexit-related threat intelligence list"
   type        = string
   default     = null
+}
+
+variable "threat_intel_dlq_arn" {
+  description = "ARN of the SQS queue or SNS topic for threat intel Lambda dead-letter queue"
+  type        = string
+  default     = null
+}
+
+variable "enable_publishing_destination" {
+  description = "Enable GuardDuty findings publishing to S3"
+  type        = bool
+  default     = true
 }
 
 variable "enable_cni_threat_intelligence" {

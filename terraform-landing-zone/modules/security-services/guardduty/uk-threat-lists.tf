@@ -162,16 +162,23 @@ resource "aws_lambda_function" "threat_intel_updater" {
   function_name = "uk-guardduty-threat-intel-updater"
   role          = aws_iam_role.threat_intel_updater[0].arn
   handler       = "index.handler"
-  runtime       = "python3.9"
+  runtime       = "python3.12"
   timeout       = 300
 
   environment {
     variables = {
       DETECTOR_ID                   = aws_guardduty_detector.main.id
       UK_GOVERNMENT_THREAT_LIST_URL = var.uk_government_threat_list_url
-      Security Standards_THREAT_LIST_URL          = var.ncsc_threat_list_url
+      NCSC_THREAT_LIST_URL          = var.ncsc_threat_list_url
       S3_BUCKET                     = var.threat_intel_s3_bucket
       KMS_KEY_ID                    = var.threat_intel_kms_key_id
+    }
+  }
+
+  dynamic "dead_letter_config" {
+    for_each = var.threat_intel_dlq_arn != null ? [1] : []
+    content {
+      target_arn = var.threat_intel_dlq_arn
     }
   }
 

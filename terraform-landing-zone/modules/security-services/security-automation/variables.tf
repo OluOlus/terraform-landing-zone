@@ -1,11 +1,11 @@
 variable "aws_region" {
   description = "AWS region for Security Automation deployment"
   type        = string
-  default     = "us-east-1"
+  default     = "eu-west-2"
 
   validation {
-    condition     = contains(["us-west-2", "us-east-1"], var.aws_region)
-    error_message = "AWS region must be a specified region (us-west-2 or us-east-1) for UK data residency compliance."
+    condition     = contains(["eu-west-2", "eu-west-1"], var.aws_region)
+    error_message = "AWS region must be a UK region (eu-west-2 or eu-west-1) for UK data residency compliance."
   }
 }
 
