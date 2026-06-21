@@ -1,4 +1,0 @@
-# file: /Users/Olu/vsc/ops-agent-controller/src/tool_execution_engine.py
-# hypothesis_version: 6.141.1
-
-['Code', 'EXECUTED', 'Error', 'MOCK_EXECUTED', 'Message', 'RequestId', 'ResponseMetadata', 'Unknown', 'WOULD_EXECUTE', 'action', 'available_tools', 'cloudwatch', 'ec2', 'execution_mode', 'guardrails_active', 'instance_id', 'message', 'mock', 'reboot_ec2_instance', 'request_id', 'response_metadata', 'validation']

@@ -1,4 +1,0 @@
-# file: /Users/Olu/vsc/ops-agent-controller/src/models.py
-# hypothesis_version: 6.141.1
-
-[256, 512, 4000, '\x00', '... [truncated]', 'ApprovalRequest', 'DRY_RUN', 'InternalMessage', 'LOCAL_MOCK', 'SANDBOX_LIVE', 'ToolCall', 'ToolResult', 'Z', 'args', 'channel', 'correlation_id', 'data', 'error', 'execution_mode', 'expires_at', 'high', 'low', 'medium', 'message_text', 'requested_by', 'requires_approval', 'risk_level', 'slack', 'success', 'teams', 'timestamp', 'token', 'tool_call', 'tool_name', 'user_id', 'web']

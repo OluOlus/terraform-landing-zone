@@ -1,4 +1,0 @@
-# file: /Users/Olu/vsc/ops-agent-controller/src/llm_provider.py
-# hypothesis_version: 6.141.1
-
-[0.0, 0.1, 0.3, 0.8, 0.9, 500, 1000, '15m', 'AWS/EC2', 'CPUUtilization', 'Code', 'Error', 'InternalServerError', 'ServiceUnavailable', 'ThrottlingException', 'Unknown error', 'args', 'array', 'bedrock-runtime', 'content', 'cpu', 'data', 'default', 'describe', 'description', 'ec2', 'error', 'filters', 'i-1234567890abcdef0', 'input', 'inputSchema', 'input_schema', 'instance', 'instance_id', 'instance_ids', 'items', 'json', 'maxTokens', 'message', 'metric_name', 'metrics', 'name', 'namespace', 'object', 'output', 'performance', 'properties', 'reboot', 'reboot_ec2_instance', 'required', 'resource_id', 'response', 'restart', 'role', 'string', 'success', 'temperature', 'text', 'time_window', 'toolSpec', 'toolUse', 'tool_calls', 'tool_name', 'tools', 'type', 'unknown', 'us-east-1', 'user']

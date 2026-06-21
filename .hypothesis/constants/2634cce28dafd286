@@ -1,4 +1,0 @@
-# file: /Users/Olu/vsc/ops-agent-controller/src/tool_guardrails.py
-# hypothesis_version: 6.141.1
-
-[255, '12h', '15m', '1h', '24h', '30m', '5m', '6h', 'AWS/ApplicationELB', 'AWS/EC2', 'AWS/ECS', 'AWS/Lambda', 'AWS/NetworkELB', 'Code', 'Error', 'Key', 'Name', 'OpsAgentManaged', 'Tags', 'Unknown', 'Value', 'Values', '^i-[0-9a-f]{8,17}$', 'additionalProperties', 'array', 'default', 'ec2', 'enum', 'filters', 'instance_id', 'instance_ids', 'items', 'maxItems', 'maxLength', 'metric_name', 'minLength', 'namespace', 'object', 'pattern', 'pending', 'properties', 'reboot_ec2_instance', 'required', 'resource-id', 'resource_id', 'running', 'shutting-down', 'state', 'stopped', 'stopping', 'string', 'tags', 'terminated', 'time_window', 'true', 'type']

@@ -1,4 +1,0 @@
-# file: /Users/Olu/vsc/ops-agent-controller/src/audit_logger.py
-# hypothesis_version: 6.141.1
-
-[100, 1000, 2592000, ':cid', 'Code', 'Error', 'Items', 'N', 'S', 'Z', '[REDACTED]', '_', 'api_key', 'apikey', 'approval_denied', 'approval_expired', 'approval_granted', 'approval_requested', 'approval_token', 'args', 'auth', 'auth_token', 'channel', 'context', 'correlation_id', 'credential', 'credentials', 'data_keys', 'decision', 'denied', 'dynamodb', 'error', 'error_message', 'error_occurred', 'error_type', 'event_data', 'event_type', 'execution_mode', 'expired', 'expires_at', 'granted', 'key', 'logs', 'message', 'message_text_length', 'passwd', 'password', 'pwd', 'request_received', 'requested_by', 'requires_approval', 'risk_level', 'secret', 'status', 'success', 'system', 'system_status_check', 'timestamp', 'token', 'tool_args', 'tool_call_executed', 'tool_call_requested', 'tool_name', 'ttl', 'user_id']

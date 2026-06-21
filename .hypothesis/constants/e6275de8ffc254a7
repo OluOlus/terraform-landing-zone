@@ -1,4 +1,0 @@
-# file: /Users/Olu/vsc/ops-agent-controller/src/approval_gate.py
-# hypothesis_version: 6.141.1
-
-['  • No parameters', 'EXECUTE', 'SIMULATE', 'SIMULATE (dry-run)', 'Token has expired', 'Token is valid', 'Z', 'actions', 'approval_request', 'approve', 'approved', 'correlation_id', 'decided_at', 'decided_by', 'deny', 'description', 'dynamodb', 'execution_mode', 'expires_at', 'expires_in_minutes', 'high', 'label', 'low', 'medium', 'memory', 'risk_level', 'title', 'token', 'type', '❌ Deny', '🔴', '🟡', '🟢']
