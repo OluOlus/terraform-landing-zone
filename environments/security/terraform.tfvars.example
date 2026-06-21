@@ -1,0 +1,5 @@
+owner_email                = "security@example.com"
+security_team_email        = "security-team@example.com"
+config_s3_bucket_name      = "uk-landing-zone-config-logs-<SECURITY_ACCOUNT_ID>"
+enable_auto_remediation    = false
+delegated_admin_account_id = "<SECURITY_ACCOUNT_ID>"

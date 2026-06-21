@@ -104,6 +104,44 @@
           "aws:PrincipalTag/BreakGlass": "true"
         }
       }
+    },
+    {
+      "Sid": "DenyPassRoleToEC2WithoutMFA",
+      "Effect": "Deny",
+      "Action": "iam:PassRole",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "false"
+        },
+        "StringEquals": {
+          "iam:PassedToService": "ec2.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "DenyUnencryptedEBSVolumes",
+      "Effect": "Deny",
+      "Action": "ec2:CreateVolume",
+      "Resource": "*",
+      "Condition": {
+        "Bool": {
+          "ec2:Encrypted": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyAccessKeysForRootAndOlderThan90Days",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateAccessKey"
+      ],
+      "Resource": "arn:aws:iam::*:root",
+      "Condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalTag/BreakGlass": "true"
+        }
+      }
     }
   ]
 }

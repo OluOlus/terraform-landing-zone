@@ -1,0 +1,3 @@
+owner_email             = "logging@example.com"
+ops_team_email          = "ops@example.com"
+log_archive_bucket_name = "uk-landing-zone-log-archive-<LOGGING_ACCOUNT_ID>"

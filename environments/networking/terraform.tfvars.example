@@ -1,0 +1,8 @@
+owner_email                   = "network@example.com"
+network_team_email            = "network-team@example.com"
+network_hub_cidr              = "10.40.0.0/16"
+public_subnet_cidrs           = ["10.40.1.0/24", "10.40.2.0/24"]
+private_subnet_cidrs          = ["10.40.10.0/24", "10.40.11.0/24"]
+database_subnet_cidrs         = ["10.40.20.0/24", "10.40.21.0/24"]
+private_hosted_zone_name      = "internal.uklandingzone.local"
+enable_dns_resolver_endpoints = true

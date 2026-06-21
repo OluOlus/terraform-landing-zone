@@ -1,0 +1,8 @@
+owner_email           = "dev@example.com"
+dev_team_email        = "dev-team@example.com"
+vpc_cidr              = "10.60.0.0/16"
+public_subnet_cidrs   = ["10.60.1.0/24", "10.60.2.0/24"]
+private_subnet_cidrs  = ["10.60.10.0/24", "10.60.11.0/24"]
+database_subnet_cidrs = ["10.60.20.0/24", "10.60.21.0/24"]
+config_s3_bucket_name = "uk-landing-zone-config-logs-<LOGGING_ACCOUNT_ID>"
+monthly_budget_limit  = "2000"

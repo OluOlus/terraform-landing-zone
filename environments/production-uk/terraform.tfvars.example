@@ -1,0 +1,7 @@
+owner_email             = "platform@example.com"
+vpc_cidr                = "10.50.0.0/16"
+public_subnet_cidrs     = ["10.50.1.0/24", "10.50.2.0/24", "10.50.3.0/24"]
+private_subnet_cidrs    = ["10.50.10.0/24", "10.50.11.0/24", "10.50.12.0/24"]
+database_subnet_cidrs   = ["10.50.20.0/24", "10.50.21.0/24", "10.50.22.0/24"]
+config_service_role_arn = "arn:aws:iam::<PRODUCTION_ACCOUNT_ID>:role/AWSConfigServiceRole"
+config_s3_bucket_name   = "uk-landing-zone-config-logs-<LOGGING_ACCOUNT_ID>"

@@ -1,0 +1,6 @@
+bucket         = "uk-landing-zone-terraform-state-<MANAGEMENT_ACCOUNT_ID>"
+key            = "environments/management/terraform.tfstate"
+region         = "eu-west-2"
+encrypt        = true
+kms_key_id     = "alias/terraform-state-key"
+dynamodb_table = "uk-landing-zone-terraform-locks"

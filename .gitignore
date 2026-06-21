@@ -18,10 +18,11 @@ terraform.rc
 !terraform.tfvars.example
 !environments/*/terraform.tfvars.example
 
-# Backend configuration files (contain sensitive info)
-backend-configs/
+# Backend configuration files (contain sensitive account IDs and role ARNs)
+backend-configs/*.hcl
+!backend-configs/*.hcl.example
 *.hcl
-!backend.hcl.example
+!*.hcl.example
 
 # Crash log files
 crash.log

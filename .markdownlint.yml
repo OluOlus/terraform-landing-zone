@@ -1,0 +1,20 @@
+default: true
+
+# Line length - allow longer lines for tables and code blocks
+MD013:
+  line_length: 200
+  tables: false
+  code_blocks: false
+
+# Allow inline HTML (used in terraform-docs output)
+MD033: false
+
+# Allow duplicate headings in different sections
+MD024:
+  siblings_only: true
+
+# Allow ordered list prefixes (1. 1. 1. style)
+MD029: false
+
+# First line should be a heading
+MD041: false

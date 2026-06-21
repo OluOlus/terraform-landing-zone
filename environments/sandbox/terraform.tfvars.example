@@ -1,0 +1,7 @@
+owner_email           = "sandbox@example.com"
+sandbox_team_email    = "sandbox-team@example.com"
+vpc_cidr              = "10.70.0.0/16"
+public_subnet_cidrs   = ["10.70.1.0/24", "10.70.2.0/24"]
+private_subnet_cidrs  = ["10.70.10.0/24", "10.70.11.0/24"]
+database_subnet_cidrs = ["10.70.20.0/24", "10.70.21.0/24"]
+monthly_budget_limit  = "500"
