@@ -3,9 +3,24 @@
 [![Terraform](https://img.shields.io/badge/Terraform-1.9+-623CE4?logo=terraform)](https://www.terraform.io/)
 [![AWS](https://img.shields.io/badge/AWS-Landing_Zone-FF9900?logo=amazon-aws)](https://aws.amazon.com/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](/.github/CONTRIBUTING.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
 
 A production-ready, multi-account AWS environment designed for organizations requiring compliance with industry security standards and regulatory frameworks.
+
+## Quick Start for Forks
+
+Fork this repo and run the one-shot setup script to adapt it for your own organisation and AWS region:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/terraform-landing-zone.git
+cd terraform-landing-zone
+chmod +x scripts/fork-setup.sh
+./scripts/fork-setup.sh
+```
+
+The script interactively replaces the `uk-` naming prefix, AWS regions (`eu-west-2` / `eu-west-1`), placeholder email addresses, and GitHub owner references throughout the entire codebase. Follow the **Next steps** it prints to bootstrap Terraform state, fill in real AWS account IDs, and deploy environments in dependency order.
+
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the full development workflow, coding standards, and how to open a pull request.
 
 ## Overview
 
@@ -204,13 +219,20 @@ checkov -d .
 
 Automated validation and security scanning via GitHub Actions:
 
-- **[Terraform Validation](.github/workflows/terraform-validate.yml)** - Format, init, validate, TFLint
-- **[Security Scan](.github/workflows/security-scan.yml)** - TFSec, Checkov compliance scanning
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| [Terraform Validation](.github/workflows/terraform-validate.yml) | PR / push to main | Format, init, validate, TFLint |
+| [Security Scan](.github/workflows/security-scan.yml) | PR / push / weekly | TFSec, Checkov — blocks PRs on violations |
+| [PR Plan](.github/workflows/pr-plan.yml) | PR to main | Posts Terraform plan output as a PR comment |
 
-Workflows run on:
-- Every pull request to main
-- Every push to main
-- Weekly security scans (Sunday)
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](.github/CONTRIBUTING.md) before opening a PR.
+
+- **Bugs**: Use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.yml)
+- **Features**: Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.yml)
+- **Security issues**: See [SECURITY.md](.github/SECURITY.md) — do not open public issues for vulnerabilities
+- **Questions**: Use [GitHub Discussions](https://github.com/OluOlus/terraform-landing-zone/discussions)
 
 ## Project Statistics
 
@@ -232,11 +254,13 @@ Workflows run on:
 
 ### Module Documentation
 
-Each module includes comprehensive README with:
+Each module includes a comprehensive README with:
 - Usage examples
 - Input variables reference
 - Output values
 - Dependencies and requirements
+
+Run `terraform-docs markdown . > README.md` inside any module to regenerate documentation after changing variables or outputs.
 
 ## Disaster Recovery
 
@@ -248,11 +272,7 @@ Each module includes comprehensive README with:
 
 ## Security
 
-### Reporting Security Issues
-
-Please report security vulnerabilities to: security@limesoftsystem.com
-
-### Security Features
+Please report security vulnerabilities privately — see [SECURITY.md](.github/SECURITY.md).
 
 - All data encrypted at rest (KMS) and in transit (TLS 1.2+)
 - MFA enforcement for all human access
@@ -265,6 +285,7 @@ Please report security vulnerabilities to: security@limesoftsystem.com
 ## Cost Management
 
 Cost controls included:
+
 - AWS Budgets with alerts at 80% and 100%
 - Cost Anomaly Detection
 - Resource tagging enforcement
@@ -272,7 +293,7 @@ Cost controls included:
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+This project is licensed under the Apache License 2.0 — see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
