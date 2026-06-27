@@ -5,11 +5,11 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
 
-A production-ready, multi-account AWS environment designed for organizations requiring compliance with industry security standards and regulatory frameworks.
+A production-grade, multi-account AWS foundation for organisations that need traceable compliance, hardened networking, and centralised security operations from day one.
 
 ## Quick Start for Forks
 
-Fork this repo and run the one-shot setup script to adapt it for your own organisation and AWS region:
+Fork this repo and run the one-shot setup script to adapt it for your organisation and preferred AWS region:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/terraform-landing-zone.git
@@ -18,290 +18,231 @@ chmod +x scripts/fork-setup.sh
 ./scripts/fork-setup.sh
 ```
 
-The script interactively replaces the `uk-` naming prefix, AWS regions (`eu-west-2` / `eu-west-1`), placeholder email addresses, and GitHub owner references throughout the entire codebase. Follow the **Next steps** it prints to bootstrap Terraform state, fill in real AWS account IDs, and deploy environments in dependency order.
+The script interactively replaces the `uk-` naming prefix, AWS regions (`eu-west-2` / `eu-west-1`), placeholder email addresses, and GitHub owner references throughout the codebase. Follow the **Next steps** printed at the end to bootstrap remote Terraform state, fill in real AWS account IDs, and deploy environments in dependency order.
 
-See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the full development workflow, coding standards, and how to open a pull request.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the full development workflow, coding standards, and pull request process.
 
 ## Overview
 
-This landing zone provides a complete AWS foundation implementing comprehensive cloud security principles, GDPR requirements, and security best practices. Built with Infrastructure as Code (Terraform), it delivers a secure, compliant, and scalable multi-account architecture with centralized security monitoring, logging, and networking.
+This landing zone stands up a complete AWS account hierarchy using Terraform, wiring in security tooling, centralised logging, network segmentation, and compliance controls out of the box. It is built to satisfy GDPR data-residency requirements and widely-used cloud security benchmarks, while remaining fully customisable for teams that need to adapt it to their own regulatory context.
 
-### Key Highlights
+### What's included
 
-- **Security First**: GuardDuty, Security Hub, Config, Network Firewall, KMS encryption
-- **Compliance Ready**: Industry security standards, GDPR, regulatory frameworks fully implemented
-- **Production Ready**: 17,000+ lines of Terraform, 15 modules, comprehensive testing
-- **Multi-Region**: Configurable regions with cross-region disaster recovery
-- **Automation**: Full IaC deployment, CI/CD workflows, automated compliance monitoring
-- **Observability**: Centralized CloudWatch, configurable retention, real-time alerting
+- **Threat detection and posture management** — GuardDuty (including S3 protection and malware scanning), Security Hub with multiple compliance packs, and AWS Config continuous recording
+- **Encrypted, immutable logging** — organisation-wide CloudTrail, VPC Flow Logs, and a dedicated Log Archive account with configurable long-term retention
+- **Segmented networking** — Transit Gateway hub-and-spoke layout, centralised Network Firewall with Suricata rules, and Route 53 Resolver for hybrid DNS
+- **Access management** — IAM Identity Center with five predefined permission sets and enforced MFA for all human access
+- **Data protection** — KMS keys on annual rotation, S3 versioning with MFA delete, and automated cross-region backups
+- **Cost controls** — AWS Budgets with threshold alerts, anomaly detection, and tagging enforcement
 
 ## Architecture
 
-### Multi-Account Structure
+### Account layout
 
 ```
 Management Account (Root)
-├── Security Tooling Account    - GuardDuty, Security Hub, Config aggregation
-├── Log Archive Account          - CloudTrail, VPC Flow Logs, 7-year retention
-├── Network Hub Account          - Transit Gateway, Network Firewall, DNS
-├── Production Account           - Production workloads
-├── Non-Production Account    - Development and testing
-└── Sandbox Account              - Experimentation and learning
+├── Security Tooling    — GuardDuty delegated admin, Security Hub aggregator, Config aggregator
+├── Log Archive         — CloudTrail destination, VPC Flow Logs, long-term retention
+├── Network Hub         — Transit Gateway, Network Firewall, Route 53 Resolver
+├── Production          — Live workloads
+├── Non-Production      — Development and test
+└── Sandbox             — Experimentation
 ```
 
-### Hub-and-Spoke Network Design
+### Hub-and-spoke network
 
 ```
                    ┌─────────────────────┐
-                   │  Transit Gateway    │
-                   │   (Network Hub)     │
+                   │   Transit Gateway   │
+                   │    (Network Hub)    │
                    └──────────┬──────────┘
                               │
            ┌──────────────────┼──────────────────┐
            │                  │                  │
     ┌──────▼──────┐    ┌──────▼──────┐   ┌──────▼──────┐
-    │ Production  │    │Non-Production│   │  Shared     │
-    │   VPC       │    │    VPC       │   │ Services    │
-    └─────────────┘    └──────────────┘   └─────────────┘
+    │ Production  │    │Non-Production│   │   Shared    │
+    │    VPC      │    │    VPC       │   │  Services   │
+    └─────────────┘    └─────────────┘   └─────────────┘
 ```
 
 See [Architecture Documentation](docs/architecture/README.md) for detailed diagrams and component descriptions.
 
-## Features
+## Security Controls
 
-### Security Services
+### Detection and monitoring
 
-| Service | Purpose | Implementation |
-|---------|---------|----------------|
-| **GuardDuty** | Threat detection | S3 protection, malware detection, K8s audit logs |
-| **Security Hub** | Security posture | CIS, GDPR, Security Best Practices packs |
-| **AWS Config** | Configuration compliance | Continuous recording, automated remediation |
-| **Network Firewall** | Traffic inspection | Suricata IDS/IPS, domain filtering |
-| **IAM Identity Center** | Centralized SSO | 5 permission sets, MFA enforcement |
+| Component | Role in this deployment |
+|-----------|------------------------|
+| GuardDuty | Org-wide threat detection — S3 data events, EC2 malware scanning, EKS audit log analysis, delegated to Security account |
+| Security Hub | Aggregates findings from GuardDuty, Config, and Inspector; runs CIS, NIST, and AWS Best Practices packs |
+| AWS Config | Records every configuration change across all accounts; triggers remediation rules on drift |
+| Network Firewall | Stateful traffic inspection at the egress point; blocks known-bad domains and enforces allowlists |
+| IAM Identity Center | Single sign-on for all accounts; MFA required; session policies limit blast radius |
 
-### Data Protection
+### Data protection
 
-- **KMS Encryption**: Automatic 365-day key rotation, multi-region replication
-- **S3 Security**: Versioning, MFA delete, public access blocking, cross-region replication
-- **AWS Backup**: Automated schedules, 7-year retention, cross-region backup
-- **Log Archive**: Configurable CloudTrail retention for compliance requirements
+- **KMS** — separate keys per service, 365-day automatic rotation, multi-region replication for DR accounts
+- **S3** — versioning and MFA delete on all logging buckets; public-access block enforced org-wide via SCP
+- **Backup** — AWS Backup plans with cross-region vaults and configurable retention windows
+- **Transit encryption** — TLS 1.2 minimum enforced on ALBs and API Gateway via policy
 
-### Networking
+## Compliance Coverage
 
-- **Transit Gateway**: Hub-and-spoke architecture with 4 dedicated route tables
-- **Network Firewall**: Centralized traffic inspection with Suricata rules
-- **Route53 Resolver**: Hybrid DNS with inbound/outbound endpoints
-- **VPC Design**: Multi-AZ, public/private/database tiers, VPC endpoints
-
-### Monitoring & Operations
-
-- **CloudWatch**: Centralized logging with KMS encryption, 7-year retention
-- **CloudTrail**: Organization-wide trail, log file validation, multi-region
-- **VPC Flow Logs**: All VPCs monitored, centralized storage
-- **Cost Management**: Budgets, anomaly detection, usage reports
-
-## Compliance Frameworks
+This deployment is designed around three reference frameworks. Full control mappings are in [COMPLIANCE.md](docs/compliance/COMPLIANCE.md).
 
 ### CIS AWS Foundations Benchmark
 
-| ID | Control | Implementation |
-|----|---------|----------------|
-| 1 | Identity and Access Management | IAM Identity Center, MFA, SCPs |
-| 2 | Logging | CloudTrail, VPC Flow Logs, Config |
-| 3 | Monitoring | GuardDuty, Security Hub, CloudWatch |
-| 4 | Networking | VPC isolation, Network Firewall, Security Groups |
-| 5 | Data Protection | KMS encryption, S3 versioning, backup |
-| ... | | See [COMPLIANCE.md](docs/compliance/COMPLIANCE.md) for full mapping |
+Controls from all five CIS benchmark sections are implemented:
 
-### GDPR Compliance
+- **Identity** — MFA enforcement, no long-lived root credentials, password policy via SCP
+- **Logging** — CloudTrail enabled org-wide with log file validation, Config enabled in all regions
+- **Monitoring** — CloudWatch metric filters and alarms for the benchmark's required event patterns
+- **Networking** — default VPCs removed in all accounts, security groups restricted by policy
+- **Data protection** — encryption at rest and in transit enforced, key rotation configured
 
-- **Encryption**: KMS at rest (365-day rotation), TLS 1.2+ in transit
-- **Data Retention**: Configurable retention policies
-- **Data Residency**: Configurable region restrictions via SCPs
-- **Access Controls**: Least privilege via IAM Identity Center
-- **Breach Notification**: GuardDuty + Security Hub real-time alerts
+### GDPR
+
+- Data stays in configurable regions — SCPs block resource creation outside the nominated regions
+- Encryption at rest and in transit is on by default, not opt-in
+- Retention policies are parameterised so they can be tuned to meet your controller/processor obligations
+- GuardDuty and Security Hub provide the near-real-time alerting needed for 72-hour breach notification timelines
+- Least-privilege access is enforced through IAM Identity Center permission sets, not ad-hoc IAM users
 
 ### AWS Security Best Practices
 
-- **Boundary Firewalls**: Network Firewall, Security Groups, NACLs
-- **Secure Configuration**: AWS Config with conformance packs
-- **Access Control**: IAM Identity Center, MFA, password policies
-- **Malware Protection**: GuardDuty malware detection
-- **Patch Management**: Systems Manager Patch Manager
+- Centralised egress via Network Firewall with deny-by-default stance
+- Config conformance packs continuously validate resource configuration
+- Systems Manager Patch Manager handles OS patching for managed instances
+- No SSH key pairs — all instance access goes through Session Manager
 
-## Quick Start
+## Prerequisites and Deployment
 
-### Prerequisites
+### Requirements
 
-- **Terraform** >= 1.9.0
-- **AWS CLI** >= 2.x with administrative credentials
-- **Git** for version control
-- **7 unique email addresses** for AWS accounts
-- **jq** for JSON processing
+- Terraform >= 1.9.0
+- AWS CLI v2 with management-account admin credentials
+- Seven unique email addresses (one per account)
+- `jq` installed locally
 
-### Deployment Phases
+### Deployment sequence
 
 ```bash
-# Phase 1: Bootstrap Management Account
+# 1 — Management account (Organizations, Identity Center, SCPs)
 cd environments/management
 terraform init -backend-config=backend.hcl
-terraform plan
 terraform apply
 
-# Phase 2: Deploy Security Services
+# 2 — Security tooling (GuardDuty, Security Hub, Config)
 cd ../security
 terraform init -backend-config=backend.hcl
 terraform apply
 
-# Phase 3: Configure Logging
+# 3 — Logging infrastructure
 cd ../logging
 terraform apply
 
-# Phase 4: Setup Networking
+# 4 — Networking (Transit Gateway, Firewall, DNS)
 cd ../networking
 terraform apply
 
-# Phase 5: Deploy Workload Accounts
+# 5 — Workload accounts
 cd ../production
 terraform apply
 ```
 
-See [Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md) for detailed step-by-step instructions.
+See [Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md) for the full step-by-step walkthrough.
 
-### Validation
-
-Run compliance checks after deployment:
+### Post-deployment validation
 
 ```bash
-# Compliance validation
+# Check compliance posture
 ./scripts/validation/compliance-check.sh
 
-# Terraform validation
+# Terraform hygiene
 terraform fmt -check -recursive .
 terraform validate
 
-# Security scan
+# Static security analysis
 tfsec .
 checkov -d .
 ```
 
-## Module Overview
+## Module Reference
 
-### Foundation Modules
+### Foundation
 
-- **[management-account](modules/avm-foundation/management-account/)** - AWS Organizations, IAM Identity Center, SCPs
-- **[security-services](modules/security-services/)** - GuardDuty, Security Hub, Config with compliance packs
+- **[management-account](modules/avm-foundation/management-account/)** — AWS Organizations structure, IAM Identity Center configuration, and Service Control Policies
+- **[control-tower](modules/avm-foundation/control-tower/)** — Optional AWS Control Tower landing zone and control enablement for teams that want Control Tower to own baseline governance
+- **[security-services](modules/security-services/)** — GuardDuty organisation-wide enablement, Security Hub aggregation, Config recorder and delivery channel
 
-### Security Modules
+### Security
 
-- **[kms](modules/security/kms/)** - KMS encryption keys with 365-day rotation, multi-region support
-- **[iam](modules/security/iam/)** - IAM roles, policies, 5 permission sets with MFA
+- **[kms](modules/security/kms/)** — KMS key creation with annual rotation and optional multi-region replication
+- **[iam](modules/security/iam/)** — IAM roles, policy documents, and the five Identity Center permission sets
 
-### Networking Modules
+### Networking
 
-- **[vpc](modules/networking/vpc/)** - Multi-AZ VPCs with flow logs, VPC endpoints
-- **[transit-gateway](modules/networking/transit-gateway/)** - Hub-and-spoke with 4 route tables
-- **[network-firewall](modules/networking/network-firewall/)** - Centralized traffic inspection
-- **[dns](modules/networking/dns/)** - Route53 Resolver with DNS Firewall
+- **[vpc](modules/networking/vpc/)** — Multi-AZ VPCs with flow log delivery, Interface and Gateway endpoints
+- **[transit-gateway](modules/networking/transit-gateway/)** — Centralised TGW with four route tables (prod, non-prod, shared, inspection)
+- **[network-firewall](modules/networking/network-firewall/)** — Stateful and stateless rule groups, domain allowlists, Suricata-compatible IDS rules
+- **[dns](modules/networking/dns/)** — Route 53 Resolver inbound/outbound endpoints and DNS Firewall rule groups
 
-### Storage & Data Modules
+### Storage and logging
 
-- **[s3](modules/storage/s3/)** - Secure S3 buckets with versioning, replication, lifecycle
-- **[backup](modules/management/backup/)** - AWS Backup with cross-region replication
-- **[log-archive](modules/logging/log-archive/)** - Centralized logging with 7-year retention
+- **[s3](modules/storage/s3/)** — Hardened S3 bucket template — versioning, replication, lifecycle, and access logging pre-wired
+- **[backup](modules/management/backup/)** — AWS Backup vaults, plans, and cross-region copy rules
+- **[log-archive](modules/logging/log-archive/)** — Centralised log ingestion with configurable retention and KMS encryption
 
-### Management Modules
+### Management
 
-- **[cloudwatch](modules/management/cloudwatch/)** - Centralized monitoring and alerting
-- **[cost-management](modules/management/cost-management/)** - Budgets, anomaly detection
+- **[cloudwatch](modules/management/cloudwatch/)** — Log groups, metric filters, alarms, and a baseline dashboard
+- **[cost-management](modules/management/cost-management/)** — Budget resources, anomaly detection monitors, and tagging policies
 
-## CI/CD Workflows
+## CI/CD
 
-Automated validation and security scanning via GitHub Actions:
+All pull requests run automated checks before merge:
 
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| [Terraform Validation](.github/workflows/terraform-validate.yml) | PR / push to main | Format, init, validate, TFLint |
-| [Security Scan](.github/workflows/security-scan.yml) | PR / push / weekly | TFSec, Checkov — blocks PRs on violations |
-| [PR Plan](.github/workflows/pr-plan.yml) | PR to main | Posts Terraform plan output as a PR comment |
-
-## Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](.github/CONTRIBUTING.md) before opening a PR.
-
-- **Bugs**: Use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.yml)
-- **Features**: Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.yml)
-- **Security issues**: See [SECURITY.md](.github/SECURITY.md) — do not open public issues for vulnerabilities
-- **Questions**: Use [GitHub Discussions](https://github.com/OluOlus/terraform-landing-zone/discussions)
-
-## Project Statistics
-
-- **114 Terraform Files** - Comprehensive infrastructure coverage
-- **17,000+ Lines of Code** - Production-ready implementation
-- **15 Modules** - Reusable, tested components
-- **9 IAM Policies** - Least privilege access controls
-- **6 Documentation Files** - Complete operational guides
-
-## Documentation
-
-### Core Documentation
-
-- **[Architecture](docs/architecture/README.md)** - Detailed architecture diagrams and component descriptions
-- **[Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md)** - Step-by-step deployment instructions
-- **[Compliance](docs/compliance/COMPLIANCE.md)** - CIS, GDPR, Security Best Practices mappings
-- **[Operations](docs/operations/)** - Runbooks and operational procedures (coming soon)
-- **[Troubleshooting](docs/troubleshooting/)** - Common issues and solutions (coming soon)
-
-### Module Documentation
-
-Each module includes a comprehensive README with:
-- Usage examples
-- Input variables reference
-- Output values
-- Dependencies and requirements
-
-Run `terraform-docs markdown . > README.md` inside any module to regenerate documentation after changing variables or outputs.
+| Workflow | Trigger | What it checks |
+|----------|---------|----------------|
+| [Terraform Validation](.github/workflows/terraform-validate.yml) | PR / push to main | `fmt`, `init`, `validate`, TFLint rules |
+| [Security Scan](.github/workflows/security-scan.yml) | PR / push / weekly | TFSec and Checkov — blocks merge on HIGH or CRITICAL findings |
+| [PR Plan](.github/workflows/pr-plan.yml) | PR to main | Posts the full `terraform plan` output as a PR comment |
 
 ## Disaster Recovery
 
-- **RTO**: < 4 hours
-- **RPO**: < 1 hour
-- **Multi-region**: Configurable primary and DR regions
-- **Backup Strategy**: Automated cross-region replication
-- **Testing**: Quarterly DR drills recommended
+| Target | Value |
+|--------|-------|
+| RTO | < 4 hours |
+| RPO | < 1 hour |
 
-## Security
+DR relies on cross-region replication for S3 buckets and KMS keys, automated AWS Backup cross-region vaults, and Terraform state that can be re-applied from source control. Quarterly DR drills are recommended.
 
-Please report security vulnerabilities privately — see [SECURITY.md](.github/SECURITY.md).
+## Statistics
 
-- All data encrypted at rest (KMS) and in transit (TLS 1.2+)
-- MFA enforcement for all human access
-- Automated threat detection with GuardDuty
-- Real-time security alerts via Security Hub
-- Continuous compliance monitoring with AWS Config
-- Network traffic inspection with Network Firewall
-- 7-year audit trail retention
+- **114 Terraform files** across environments and modules
+- **17,000+ lines** of production-ready infrastructure code
+- **15 reusable modules** with consistent interfaces
+- **9 IAM policy documents** following least-privilege principles
+- **6 documentation files** covering architecture, deployment, and operations
 
-## Cost Management
+## Documentation
 
-Cost controls included:
+- [Architecture](docs/architecture/README.md) — diagrams and component descriptions
+- [Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md) — step-by-step instructions
+- [Compliance](docs/compliance/COMPLIANCE.md) — full CIS, GDPR, and best-practice control mappings
+- [Disaster Recovery Runbook](docs/operations/runbooks/disaster-recovery.md)
+- [Security Incident Response](docs/operations/runbooks/security-incident-response.md)
 
-- AWS Budgets with alerts at 80% and 100%
-- Cost Anomaly Detection
-- Resource tagging enforcement
-- Right-sizing recommendations
+Each module also ships its own README. To regenerate a module README after changing variables or outputs:
+
+```bash
+terraform-docs markdown . > README.md
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md). Use the [bug report](.github/ISSUE_TEMPLATE/bug_report.yml) or [feature request](.github/ISSUE_TEMPLATE/feature_request.yml) templates for issues, and [SECURITY.md](.github/SECURITY.md) for privately disclosing vulnerabilities.
 
 ## License
 
-This project is licensed under the Apache License 2.0 — see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-Built with:
-- [AWS Verified Modules](https://registry.terraform.io/namespaces/aws-ia)
-- [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest)
-- CIS AWS Foundations Benchmark
-- AWS Security Best Practices
-- Industry compliance frameworks
-
----
+Apache License 2.0 — see [LICENSE](LICENSE).

@@ -68,14 +68,41 @@ module "management_account" {
 
 # Organization Module
 module "organization" {
+  count = var.enable_control_tower ? 0 : 1
+
   source = "../../modules/avm-foundation/organization"
 
   organization_id = module.management_account.organization_id
   common_tags     = local.common_tags
 }
 
+# AWS Control Tower Landing Zone
+module "control_tower" {
+  source = "../../modules/avm-foundation/control-tower"
+
+  enabled              = var.enable_control_tower
+  landing_zone_version = var.control_tower_landing_zone_version
+  governed_regions     = var.control_tower_governed_regions
+
+  organization_structure = var.control_tower_organization_structure
+  log_archive_account_id = var.control_tower_log_archive_account_id
+  audit_account_id       = var.control_tower_audit_account_id
+
+  enable_centralized_logging           = var.control_tower_enable_centralized_logging
+  logging_bucket_retention_days        = var.control_tower_logging_bucket_retention_days
+  access_logging_bucket_retention_days = var.control_tower_access_logging_bucket_retention_days
+  enable_iam_identity_center           = var.control_tower_enable_iam_identity_center
+  remediation_types                    = var.control_tower_remediation_types
+  enabled_controls                     = var.control_tower_enabled_controls
+  common_tags                          = local.common_tags
+
+  depends_on = [module.management_account]
+}
+
 # IAM Identity Center
 module "identity_center" {
+  count = var.enable_control_tower && var.control_tower_enable_iam_identity_center ? 0 : 1
+
   source = "../../modules/avm-foundation/iam-identity-center"
 
   enable_break_glass_monitoring = true

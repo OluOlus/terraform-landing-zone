@@ -75,10 +75,10 @@ This runbook provides procedures for disaster recovery scenarios in the AWS Secu
 1. **Activate Secondary Region**
    ```bash
    # Switch to backup region
-   export AWS_DEFAULT_REGION=us-west-2
+   export AWS_DEFAULT_REGION=eu-west-1
    
    # Check service availability
-   aws ec2 describe-availability-zones --region us-west-2
+   aws ec2 describe-availability-zones --region eu-west-1
    ```
 
 2. **DNS Failover**
@@ -95,7 +95,7 @@ This runbook provides procedures for disaster recovery scenarios in the AWS Secu
    ```bash
    # Deploy infrastructure
    cd environments/production-dr
-   terraform init -backend-config="region=us-west-2"
+   terraform init -backend-config="region=eu-west-1"
    terraform apply -auto-approve
    ```
 
@@ -105,7 +105,7 @@ This runbook provides procedures for disaster recovery scenarios in the AWS Secu
    aws rds restore-db-instance-from-db-snapshot \
      --db-instance-identifier production-db-dr \
      --db-snapshot-identifier cross-region-snapshot \
-     --region us-west-2
+     --region eu-west-1
    ```
 
 ### 3. Data Loss Event

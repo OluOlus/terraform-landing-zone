@@ -7,8 +7,8 @@ The UK AWS Secure Landing Zone is a comprehensive, multi-account AWS environment
 ## Architecture Principles
 
 ### 1. UK Data Residency
-- **Primary Region**: us-east-1 (London)
-- **Secondary Region**: us-west-2 (Ireland) for disaster recovery
+- **Primary Region**: eu-west-2 (London)
+- **Secondary Region**: eu-west-1 (Ireland) for disaster recovery
 - All data storage and processing within specified regions boundaries
 - Regional restrictions enforced via SCPs and IAM policies
 
@@ -105,6 +105,15 @@ Management Account (Root)
    - Encryption requirements
    - CloudTrail protection
    - IAM privilege restrictions
+
+### Governance Mode
+
+The landing zone supports two governance modes:
+
+1. **Custom Terraform Organizations mode** - Terraform directly manages AWS Organizations, OUs, SCPs, and account vending.
+2. **AWS Control Tower mode** - Terraform creates the AWS Control Tower landing zone and optional Control Tower controls. In this mode, Control Tower owns the baseline OUs and guardrails, and the custom Organizations module is disabled in the management environment.
+
+If Control Tower is configured to enable IAM Identity Center, the custom IAM Identity Center module is also disabled to avoid overlapping ownership.
 
 ### Data Protection
 
@@ -217,7 +226,7 @@ Lambda (Automated Response)
 
 ## Future Enhancements
 
-1. Implement AWS Control Tower integration
+1. Add AWS Control Tower Account Factory for Terraform integration
 2. Add AWS Systems Manager automation
 3. Expand to additional specified regions (as available)
 4. Implement AWS WAF for application protection

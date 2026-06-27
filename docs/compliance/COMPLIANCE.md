@@ -30,7 +30,7 @@ This landing zone implements all 14 Security Standards Cloud Security Principles
 - **Encryption at Rest**: KMS with automatic rotation
 - **Encryption in Transit**: TLS 1.2+ enforced
 - **Data Retention**: 7-year retention for audit logs
-- **Data Residency**: specified regions regions only (us-east-1, us-west-2)
+- **Data Residency**: approved regions only (eu-west-2, eu-west-1)
 - **Access Controls**: Least privilege via IAM Identity Center
 - **Audit Trail**: CloudTrail organization trail
 - **Breach Notification**: GuardDuty + Security Hub alerts

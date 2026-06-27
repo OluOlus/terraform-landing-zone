@@ -3,3 +3,15 @@ allowed_account_ids  = ["<MANAGEMENT_ACCOUNT_ID>"]
 owner_email          = "cloud-platform@example.com"
 ops_team_email       = "ops@example.com"
 monthly_budget_limit = "10000"
+
+# Optional AWS Control Tower integration. Leave disabled for the custom
+# Terraform-managed Organizations path.
+enable_control_tower                    = false
+control_tower_landing_zone_version      = null
+control_tower_log_archive_account_id    = "<LOG_ARCHIVE_ACCOUNT_ID>"
+control_tower_audit_account_id          = "<AUDIT_ACCOUNT_ID>"
+control_tower_governed_regions          = ["eu-west-2", "eu-west-1"]
+control_tower_enable_centralized_logging = true
+control_tower_enable_iam_identity_center = true
+control_tower_remediation_types          = []
+control_tower_enabled_controls           = {}
