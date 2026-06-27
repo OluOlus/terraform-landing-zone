@@ -26,7 +26,7 @@ Be respectful. We follow the [Contributor Covenant](https://www.contributor-cove
 
 | Tool | Minimum Version | Install |
 |------|----------------|---------|
-| Terraform | 1.5.0 | [terraform.io](https://developer.hashicorp.com/terraform/install) |
+| Terraform | 1.9.0 | [terraform.io](https://developer.hashicorp.com/terraform/install) |
 | AWS CLI | 2.x | [aws.amazon.com/cli](https://aws.amazon.com/cli/) |
 | pre-commit | 3.0.0 | `pip install pre-commit` |
 | tflint | latest | [github.com/terraform-linters/tflint](https://github.com/terraform-linters/tflint) |

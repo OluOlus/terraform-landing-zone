@@ -1,4 +1,5 @@
 organization_name    = "UK Secure Landing Zone"
+allowed_account_ids  = ["<MANAGEMENT_ACCOUNT_ID>"]
 owner_email          = "cloud-platform@example.com"
 ops_team_email       = "ops@example.com"
 monthly_budget_limit = "10000"

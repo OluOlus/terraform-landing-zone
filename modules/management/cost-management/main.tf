@@ -2,7 +2,7 @@
 # This module implements cost management and budgets for the UK AWS Secure Landing Zone
 
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.9.0"
 
   required_providers {
     aws = {

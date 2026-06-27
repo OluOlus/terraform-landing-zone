@@ -3,7 +3,7 @@
 # Minimal security controls with cost optimization
 
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.9.0"
 
   required_providers {
     aws = {
@@ -19,7 +19,8 @@ terraform {
 
 # Primary Provider (eu-west-2 - London)
 provider "aws" {
-  region = "eu-west-2"
+  region              = "eu-west-2"
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
     tags = local.common_tags
@@ -28,8 +29,9 @@ provider "aws" {
 
 # Replica Provider (eu-west-1 - Ireland) for cross-region
 provider "aws" {
-  alias  = "replica"
-  region = "eu-west-1"
+  alias               = "replica"
+  region              = "eu-west-1"
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
     tags = local.common_tags
@@ -38,8 +40,9 @@ provider "aws" {
 
 # Alias for alternate region (same as replica)
 provider "aws" {
-  alias  = "alternate"
-  region = "eu-west-1"
+  alias               = "alternate"
+  region              = "eu-west-1"
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
     tags = local.common_tags
@@ -48,8 +51,9 @@ provider "aws" {
 
 # Alias for disaster recovery
 provider "aws" {
-  alias  = "disaster_recovery"
-  region = "eu-west-1"
+  alias               = "disaster_recovery"
+  region              = "eu-west-1"
+  allowed_account_ids = var.allowed_account_ids
 
   default_tags {
     tags = local.common_tags

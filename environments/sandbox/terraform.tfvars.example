@@ -1,3 +1,4 @@
+allowed_account_ids   = ["<SANDBOX_ACCOUNT_ID>"]
 owner_email           = "sandbox@example.com"
 sandbox_team_email    = "sandbox-team@example.com"
 vpc_cidr              = "10.70.0.0/16"

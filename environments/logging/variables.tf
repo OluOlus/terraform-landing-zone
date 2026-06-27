@@ -1,5 +1,11 @@
 # Logging Environment Variables
 
+variable "allowed_account_ids" {
+  description = "AWS account IDs that Terraform is allowed to manage for this environment. Leave empty only for initial bootstrap."
+  type        = list(string)
+  default     = []
+}
+
 variable "owner_email" {
   description = "Email address of the infrastructure owner"
   type        = string

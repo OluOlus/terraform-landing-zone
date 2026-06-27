@@ -1,3 +1,4 @@
+allowed_account_ids           = ["<NETWORKING_ACCOUNT_ID>"]
 owner_email                   = "network@example.com"
 network_team_email            = "network-team@example.com"
 network_hub_cidr              = "10.40.0.0/16"

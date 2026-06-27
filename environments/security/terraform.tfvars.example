@@ -1,3 +1,4 @@
+allowed_account_ids        = ["<SECURITY_ACCOUNT_ID>"]
 owner_email                = "security@example.com"
 security_team_email        = "security-team@example.com"
 config_s3_bucket_name      = "uk-landing-zone-config-logs-<SECURITY_ACCOUNT_ID>"

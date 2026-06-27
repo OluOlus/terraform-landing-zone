@@ -35,7 +35,7 @@ module "log_archive" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.5.0 |
+| terraform | >= 1.9.0 |
 | aws | ~> 5.0 |
 
 Two provider configurations are required: default (`aws`) for eu-west-2 and `aws.replica` for eu-west-1.

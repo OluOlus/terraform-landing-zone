@@ -1,7 +1,7 @@
 # Version Constraints for UK AWS Secure Landing Zone
 
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.9.0"
 
   required_providers {
     aws = {
@@ -45,7 +45,7 @@ terraform {
 locals {
   avm_compatible_versions = {
     aws_provider_version    = "~> 5.0"
-    terraform_version       = ">= 1.5.0"
+    terraform_version       = ">= 1.9.0"
     random_provider_version = "~> 3.4"
     time_provider_version   = "~> 0.9"
   }
