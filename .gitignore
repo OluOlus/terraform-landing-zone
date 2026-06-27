@@ -23,6 +23,9 @@ backend-configs/*.hcl
 !backend-configs/*.hcl.example
 *.hcl
 !*.hcl.example
+!.tflint.hcl
+!.tfsec.yml
+!.terraform-docs.yml
 
 # Crash log files
 crash.log
