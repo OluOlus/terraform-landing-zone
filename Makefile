@@ -1,7 +1,7 @@
 # UK AWS Secure Landing Zone - Makefile
 # Provides automation for common tasks
 
-.PHONY: help bootstrap init plan apply destroy test lint security-scan docs clean
+.PHONY: help bootstrap init plan apply destroy test test-unit test-integration test-property lint security-scan docs clean
 
 # Default target
 help: ## Show this help message
@@ -12,7 +12,8 @@ help: ## Show this help message
 # Variables
 ENVIRONMENT ?= management
 AWS_REGION ?= eu-west-2
-TERRAFORM_VERSION ?= 1.5.0
+TERRAFORM_VERSION ?= 1.9.0
+TEST_SCRIPT ?= scripts/validation/run-all-tests.sh
 
 # Bootstrap and initialization
 bootstrap: ## Bootstrap Terraform state management infrastructure
@@ -67,19 +68,19 @@ destroy: ## Destroy Terraform resources for specified environment
 # Testing
 test: ## Run all tests
 	@echo "Running all tests..."
-	@scripts/validation/run-all-tests.sh
+	@$(TEST_SCRIPT)
 
 test-unit: ## Run unit tests
 	@echo "Running unit tests..."
-	@cd tests && go test ./unit/...
+	@go test ./tests/unit/...
 
 test-integration: ## Run integration tests
 	@echo "Running integration tests..."
-	@cd tests && go test -timeout 30m ./integration/...
+	@bash tests/integration/organization_integration_test.sh
 
 test-property: ## Run property-based tests
 	@echo "Running property-based tests..."
-	@cd tests && go test -count=100 ./property/...
+	@go test -count=100 ./tests/property/...
 
 # Code quality and security
 lint: ## Run linting checks

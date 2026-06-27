@@ -14,13 +14,13 @@ This directory contains integration tests for cross-account and connectivity tes
 
 ```bash
 # Run all integration tests
-go test ./tests/integration/...
+make test-integration
 
-# Run specific integration tests
-go test ./tests/integration/cross-account/
+# Run the organization integration test directly
+bash tests/integration/organization_integration_test.sh
 
-# Run with verbose output and timeout
-go test -v -timeout 30m ./tests/integration/...
+# Run the full repository test suite
+make test
 ```
 
 ## Test Requirements
@@ -28,5 +28,4 @@ go test -v -timeout 30m ./tests/integration/...
 - Multiple AWS accounts configured
 - Cross-account roles set up
 - Network connectivity established
-- Go 1.19 or higher
-- Terratest library
+- Bash
